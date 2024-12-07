@@ -1,0 +1,44 @@
+{% extends "base.html" %}
+
+{% block title %}Inicio{% endblock %}
+
+{% block content %}
+<div class="container">
+    <h2>Productos Publicados</h2>
+    <div class="productos">
+        {% if productos %}
+            {% for producto in productos %}
+            <div class="producto">
+                <h3>{{ producto.titulo }}</h3>
+                <p>{{ producto.descripcion }}</p>
+                <p>Precio: {{ producto.precio }}</p>
+                <p>Ubicación: {{ producto.ubicacion }}</p>
+                <p>Categoría: {{ producto.categoria.nombre }}</p>
+                <p>Estado: {{ producto.estado }}</p>
+
+                <!-- Carrusel de imágenes -->
+                <div id="carousel{{ producto.id }}" class="carousel slide" data-bs-ride="carousel">
+                    <div class="carousel-inner">
+                        {% for imagen in producto.imagenes.all %}
+                        <div class="carousel-item {% if forloop.first %}active{% endif %}">
+                            <img src="{{ imagen.imagen.url }}" class="d-block w-100" alt="{{ producto.titulo }}">
+                        </div>
+                        {% endfor %}
+                    </div>
+                    <button class="carousel-control-prev" type="button" data-bs-target="#carousel{{ producto.id }}" data-bs-slide="prev">
+                        <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                        <span class="visually-hidden">Previous</span>
+                    </button>
+                    <button class="carousel-control-next" type="button" data-bs-target="#carousel{{ producto.id }}" data-bs-slide="next">
+                        <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                        <span class="visually-hidden">Next</span>
+                    </button>
+                </div>
+            </div>
+            {% endfor %}
+        {% else %}
+            <p>No se encontraron productos.</p>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,22 @@
+{% extends "base.html" %}
+
+{% block title %}Mi Perfil{% endblock %}
+
+{% block content %}
+<h2>Mi Perfil</h2>
+{% if perfil.avatar %}
+    <img src="{{ perfil.avatar.url }}" alt="Avatar" width="150">
+{% else %}
+    <img src="{{ MEDIA_URL }}avatars/default_avatar.png" alt="Avatar" width="150">
+{% endif %}
+<p><strong>Usuario:</strong> {{ perfil.user.username }}</p>
+<p><strong>Bio:</strong> {{ perfil.bio|default:"Sin información" }}</p>
+<p><strong>Ubicación:</strong> {{ perfil.ubicacion|default:"Ubicación no especificada" }}</p>
+<a href="{% url 'editar_perfil' %}" class="btn btn-primary">Editar Perfil</a>
+
+<!-- Opción de Cerrar Sesión -->
+<form method="post" action="{% url 'logout' %}" style="margin-top: 20px;">
+    {% csrf_token %}
+    <button type="submit" class="btn btn-danger">Cerrar Sesión</button>
+</form>
+{% endblock %}

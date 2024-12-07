@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Publicar Producto</title>
+</head>
+<body>
+    <h1>Mi Aplicación</h1>
+    <a href="{% url 'lista_productos' %}">Inicio</a> | <a href="{% url 'publicar_producto' %}">Publicar Anuncio</a>
+    
+    <h2>Publicar Producto</h2>
+    <form method="post" enctype="multipart/form-data">
+        {% csrf_token %}
+        <!-- Mostrar todos los campos del formulario -->
+        {{ form.as_p }}
+        
+        <!-- Campo para subir múltiples imágenes -->
+        <label for="imagenes">Imágenes (máx. 8):</label>
+        <input type="file" name="imagenes" id="imagenes" accept="image/*" multiple>
+        <p>Puedes subir hasta 8 imágenes.</p>
+        
+        <button type="submit">Publicar</button>
+    </form>
+
+    <footer>
+        <p>&copy; 2024 Mi Proyecto</p>
+    </footer>
+</body>
+</html>

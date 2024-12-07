@@ -1,0 +1,196 @@
+/* General Reset */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+/* Body Styling */
+body {
+    font-family: Arial, sans-serif;
+    background-color: #f4f4f4;
+    color: #333;
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+}
+
+/* Header */
+.header {
+    background-color: #f8f9fa;
+    padding: 10px 20px;
+    border-bottom: 1px solid #ddd;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    position: fixed;
+    transition: transform 2s ease-in-out;
+}
+
+/* Primera fila: Logo y búsqueda */
+.row-top {
+    display: flex;
+    align-items: center;
+    gap: 10px; /* Espacio entre el logo y el input */
+}
+
+.logo img {
+    height: 40px;
+}
+
+.search-input {
+    flex: 1; /* Ocupar el resto del espacio disponible */
+    padding: 5px;
+    font-size: 14px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+}
+
+/* Segunda fila: Filtros y botón */
+.row-bottom {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+}
+
+.custom-select {
+    flex: 1; /* Ajustar ancho dinámicamente */
+    min-width: 120px;
+    padding: 5px;
+    font-size: 14px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+}
+
+.apply-filters {
+    padding: 5px 10px;
+    font-size: 14px;
+    background-color: #007bff;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+.apply-filters:hover {
+    background-color: #0056b3;
+}
+
+/* Main Content */
+.container {
+    max-width: 1200px;
+    margin: 20px auto;
+    padding: 20px;
+    flex: 1; /* Ocupa todo el espacio disponible para empujar el footer */
+    margin-top: 69px
+}
+
+/* Productos */
+.producto {
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    padding: 15px;
+    margin-bottom: 15px;
+    background-color: #fff;
+}
+
+.producto img {
+    max-width: 100px;
+    margin-right: 10px;
+}
+
+.producto h3 {
+    font-size: 18px;
+    margin-bottom: 10px;
+}
+
+.producto p {
+    font-size: 14px;
+    margin-bottom: 5px;
+}
+
+/* Footer */
+.footer {
+    background-color: #f8f9fa;
+    padding: 10px 20px;
+    border-top: 1px solid #ddd;
+    text-align: center;
+    display: flex;
+    justify-content: center;
+    flex-direction: column;
+    gap: 10px;
+    position: fixed; /* Fija el footer */
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    z-index: 1000;
+}
+
+.footer-icons {
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+}
+
+.footer-icon img {
+    height: 30px;
+    cursor: pointer;
+}
+
+.footer-icon img:hover {
+    opacity: 0.8;
+}
+
+.footer p {
+    font-size: 12px;
+    color: #555;
+}
+
+/*-----------------------Estilos carrusel-----------------------*/
+
+/* Ajuste del carrusel */
+.carousel {
+    margin-top: 10px;
+}
+
+.carousel img {
+    max-height: 300px; /* Ajustar la altura máxima de las imágenes */
+    object-fit: cover; /* Recortar imágenes manteniendo proporciones */
+    border-radius: 8px; /* Bordes redondeados */
+}
+
+.carousel-control-prev-icon,
+.carousel-control-next-icon {
+    background-color: rgba(0, 0, 0, 0.5); /* Fondo semitransparente para los controles */
+    border-radius: 50%;
+}
+
+/* Responsividad */
+@media (max-width: 768px) {
+    .row-top {
+        flex-direction: row; /* Asegurar alineación horizontal */
+    }
+
+    .row-bottom {
+        flex-direction: row;
+        flex-wrap: wrap;
+        justify-content: space-between;
+        gap: 10px;
+    }
+
+    .search-input,
+    .custom-select,
+    .apply-filters {
+        flex: 1;
+        width: 100%; /* Ajustar al ancho completo */
+    }
+
+    .search-input {
+        width: calc(100% - 50px); /* Reservar espacio para el logo */
+    }
+
+    .footer-icons {
+        flex-wrap: wrap;
+        gap: 15px;
+    }
+}

@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Opciones de Inicio de Sesión</title>
+</head>
+<body>
+    <h2>Inicia sesión o regístrate</h2>
+    
+    <!-- Sección de inicio de sesión -->
+    <div>
+        <h3>Iniciar Sesión</h3>
+        <form method="post">
+            {% csrf_token %}
+            {{ form.as_p }}
+            <button type="submit">Iniciar sesión</button>
+        </form>
+    </div>
+
+    <hr>
+
+    <!-- Sección de registro -->
+    <div>
+        <h3>¿No tienes cuenta? Regístrate aquí</h3>
+        <a href="{% url 'registro' %}">Crear cuenta nueva</a>
+    </div>
+</body>
+</html>
