@@ -1,13 +1,10 @@
-# Importar formulario predeterminado de registro
 from django.contrib import messages
-from .forms import ProductoForm
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth import login
-from .forms import PerfilForm
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import render, redirect
-from django.shortcuts import render
-from .models import Producto, Categoria  # Importar los modelos necesarios
+from .forms import ProductoForm, PerfilForm
+from .models import Producto, Categoria
 
 
 def home(request):
@@ -59,42 +56,23 @@ def home(request):
 
 @login_required
 def perfil_view(request):
-    try:
-        perfil = request.user.perfil
-        # Si el perfil existe, renderiza la plantilla del perfil
-        return render(request, 'anuncios/perfil.html', {'perfil': perfil})
-    except AttributeError:
-        # Si el perfil no existe, muestra un mensaje o redirige
-        messages.error(
-            request, 'Debes completar tu perfil antes de acceder a esta página.')
-        # Redirige a la página de login o registro
-        return redirect('account_login')
-
-
-@login_required
-def editar_perfil(request):
+    # Obtener el perfil del usuario actual
     perfil = request.user.perfil
     if request.method == 'POST':
+        # Si se envía un formulario, procesa los datos del perfil
         form = PerfilForm(request.POST, request.FILES, instance=perfil)
         if form.is_valid():
             form.save()
-            return redirect('perfil')  # Redirige a la vista del perfil
+            messages.success(
+                request, 'Tu perfil ha sido actualizado correctamente.')
+            # Redirige a la misma página después de guardar
+            return redirect('perfil')
     else:
+        # Carga el formulario con los datos actuales del perfil
         form = PerfilForm(instance=perfil)
-    return render(request, 'anuncios/editar_perfil.html', {'form': form})
 
-
-def registro(request):
-    if request.method == 'POST':
-        form = UserCreationForm(request.POST)
-        if form.is_valid():
-            user = form.save()
-            # Autentica al usuario automáticamente tras registrarlo
-            login(request, user)
-            return redirect('home')  # Redirige a la página principal
-    else:
-        form = UserCreationForm()
-    return render(request, 'registration/register.html', {'form': form})
+    # Renderiza la plantilla del perfil con el formulario
+    return render(request, 'anuncios/perfil.html', {'perfil': perfil, 'form': form})
 
 
 def publicar_producto(request):
@@ -109,3 +87,15 @@ def publicar_producto(request):
     else:
         form = ProductoForm()
     return render(request, 'anuncios/publicar_producto.html', {'form': form})
+
+
+def registro(request):
+    if request.method == 'POST':
+        form = UserCreationForm(request.POST)
+        if form.is_valid():
+            form.save()
+            # Redirige al login tras el registro
+            return redirect('account_login')
+    else:
+        form = UserCreationForm()
+    return render(request, 'anuncios/registro.html', {'form': form})

@@ -16,3 +16,26 @@ window.addEventListener('scroll', function() {
     // Actualizamos la última posición del scroll
     lastScrollTop = currentScroll <= 0 ? 0 : currentScroll;
 });
+
+
+
+
+// Mostrar/Ocultar el formulario de edición y los datos del perfil
+const editarPerfilBtn = document.getElementById('editar-perfil-btn'); // Botón de editar
+const datosPerfil = document.getElementById('datos-perfil'); // Div con datos del perfil
+const formularioEditarPerfil = document.getElementById('formulario-editar-perfil'); // Formulario de edición
+
+if (editarPerfilBtn && datosPerfil && formularioEditarPerfil) {
+    editarPerfilBtn.addEventListener('click', function () {
+        // Alternar visibilidad de los datos del perfil y el formulario
+        if (formularioEditarPerfil.style.display === 'none' || formularioEditarPerfil.style.display === '') {
+            formularioEditarPerfil.style.display = 'block'; // Mostrar formulario
+            datosPerfil.style.display = 'none'; // Ocultar datos del perfil
+            editarPerfilBtn.textContent = 'Cancelar'; // Cambiar texto del botón
+        } else {
+            formularioEditarPerfil.style.display = 'none'; // Ocultar formulario
+            datosPerfil.style.display = 'block'; // Mostrar datos del perfil
+            editarPerfilBtn.textContent = 'Editar Perfil'; // Restaurar texto del botón
+        }
+    });
+}

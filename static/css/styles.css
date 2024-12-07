@@ -24,7 +24,9 @@ body {
     flex-direction: column;
     gap: 10px;
     position: fixed;
-    transition: transform 2s ease-in-out;
+    width: 100%;
+    z-index: 1000;
+    top: 0;
 }
 
 /* Primera fila: Logo y búsqueda */
@@ -82,7 +84,7 @@ body {
     margin: 20px auto;
     padding: 20px;
     flex: 1; /* Ocupa todo el espacio disponible para empujar el footer */
-    margin-top: 69px
+    margin-top: 80px; /* Para evitar solapamiento con el header */
 }
 
 /* Productos */
@@ -117,38 +119,52 @@ body {
     text-align: center;
     display: flex;
     justify-content: center;
-    flex-direction: column;
-    gap: 10px;
     position: fixed; /* Fija el footer */
     bottom: 0;
     left: 0;
     width: 100%;
     z-index: 1000;
+    box-shadow: 0 -1px 5px rgba(0, 0, 0, 0.1); /* Agrega una sombra para separar visualmente */
 }
 
 .footer-icons {
     display: flex;
-    justify-content: space-around;
-    align-items: center;
+    justify-content: space-around; /* Espacio uniforme entre los íconos */
+    align-items: center; /* Centra verticalmente los íconos y textos */
+    width: 100%; /* Asegura que ocupe todo el ancho del footer */
+    max-width: 600px; /* Limita el ancho máximo para dispositivos grandes */
+    margin: 0 auto; /* Centra el contenedor de íconos */
+}
+
+.footer-icon {
+    display: flex;
+    flex-direction: column; /* Garantiza que los elementos estén en columna */
+    align-items: center; /* Centra los elementos horizontalmente */
+    text-decoration: none; /* Quitar el subrayado de los enlaces */
+    text-align: center; /* Centra el contenido */
 }
 
 .footer-icon img {
     height: 30px;
     cursor: pointer;
+    margin-bottom: 5px; /* Espacio entre el ícono y el texto */
 }
 
 .footer-icon img:hover {
     opacity: 0.8;
+    transform: scale(1.1); /* Efecto de aumento al pasar el ratón */
+    transition: transform 0.2s ease-in-out;
 }
 
-.footer p {
-    font-size: 12px;
-    color: #555;
+.footer-icon span {
+    font-size: 12px; /* Tamaño de fuente para los nombres */
+    color: #555; /* Color del texto */
+    line-height: 1.2; /* Altura de línea para mejorar legibilidad */
+    text-align: center; /* Centra el texto */
+    white-space: nowrap; /* Evita que el texto se divida en varias líneas */
 }
 
-/*-----------------------Estilos carrusel-----------------------*/
-
-/* Ajuste del carrusel */
+/* Carrusel */
 .carousel {
     margin-top: 10px;
 }
@@ -167,30 +183,13 @@ body {
 
 /* Responsividad */
 @media (max-width: 768px) {
-    .row-top {
-        flex-direction: row; /* Asegurar alineación horizontal */
-    }
-
-    .row-bottom {
-        flex-direction: row;
-        flex-wrap: wrap;
-        justify-content: space-between;
-        gap: 10px;
-    }
-
-    .search-input,
-    .custom-select,
-    .apply-filters {
-        flex: 1;
-        width: 100%; /* Ajustar al ancho completo */
-    }
-
-    .search-input {
-        width: calc(100% - 50px); /* Reservar espacio para el logo */
-    }
-
     .footer-icons {
-        flex-wrap: wrap;
-        gap: 15px;
+        flex-wrap: nowrap; /* Asegura que los íconos y spans no se desplacen */
+        justify-content: space-around; /* Mantén espacio uniforme */
+    }
+
+    .footer-icon {
+        flex-grow: 0; /* No se expanden en pantallas pequeñas */
+        flex-basis: auto; /* Tamaño automático ajustado */
     }
 }

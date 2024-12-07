@@ -1,18 +1,44 @@
 {% extends "base.html" %}
+{% load static %}
 
 {% block title %}Mi Perfil{% endblock %}
 
 {% block content %}
+<!-- Header con el logo -->
+<header id="header" class="header">
+    <div class="row-top">
+        <a href="/" class="logo">
+            <img src="{% static 'images/logo.png' %}" alt="logo">
+        </a>
+    </div>
+</header>
+
+<!-- Contenido del perfil -->
 <h2>Mi Perfil</h2>
-{% if perfil.avatar %}
-    <img src="{{ perfil.avatar.url }}" alt="Avatar" width="150">
-{% else %}
-    <img src="{{ MEDIA_URL }}avatars/default_avatar.png" alt="Avatar" width="150">
-{% endif %}
-<p><strong>Usuario:</strong> {{ perfil.user.username }}</p>
-<p><strong>Biografiaaaa:</strong> {{ perfil.bio|default:"Sin información" }}</p>
-<p><strong>Ubicación:</strong> {{ perfil.ubicacion|default:"Ubicación no especificada" }}</p>
-<a href="{% url 'editar_perfil' %}" class="btn btn-primary">Editar Perfil</a>
+
+<div id="datos-perfil">
+    {% if perfil.avatar %}
+        <img src="{{ perfil.avatar.url }}" alt="Avatar" width="150">
+    {% else %}
+        <img src="{{ MEDIA_URL }}avatars/default_avatar.png" alt="Avatar" width="150">
+    {% endif %}
+    <p><strong>Usuario:</strong> {{ perfil.user.username }}</p>
+    <p><strong>Biografía:</strong> {{ perfil.bio|default:"Sin información" }}</p>
+    <p><strong>Ubicación:</strong> {{ perfil.ubicacion|default:"Ubicación no especificada" }}</p>
+</div>
+
+<!-- Botón para mostrar/ocultar datos y formulario -->
+<button id="editar-perfil-btn" class="btn btn-secondary">Editar Perfil</button>
+
+<!-- Formulario de Edición del Perfil -->
+<div id="formulario-editar-perfil" style="display: none; margin-top: 20px;">
+    <h3>Editar Perfil</h3>
+    <form method="POST" enctype="multipart/form-data">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <button type="submit" class="btn btn-primary">Guardar</button>
+    </form>
+</div>
 
 <!-- Opción de Cerrar Sesión -->
 <form method="post" action="{% url 'logout' %}" style="margin-top: 20px;">

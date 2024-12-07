@@ -21,6 +21,5 @@ urlpatterns = [
 
     # Perfiles
     path('perfil/', views.perfil_view, name='perfil'),  # Vista del perfil
-    path('perfil/editar/', views.editar_perfil,
-         name='editar_perfil'),  # Editar perfil
+
 ]

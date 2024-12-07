@@ -1,44 +1,145 @@
-{% extends "base.html" %}
-
-{% block title %}Inicio{% endblock %}
-
-{% block content %}
-<div class="container">
-    <h2>Productos Publicados</h2>
-    <div class="productos">
-        {% if productos %}
-            {% for producto in productos %}
-            <div class="producto">
-                <h3>{{ producto.titulo }}</h3>
-                <p>{{ producto.descripcion }}</p>
-                <p>Precio: {{ producto.precio }}</p>
-                <p>Ubicación: {{ producto.ubicacion }}</p>
-                <p>Categoría: {{ producto.categoria.nombre }}</p>
-                <p>Estado: {{ producto.estado }}</p>
-
-                <!-- Carrusel de imágenes -->
-                <div id="carousel{{ producto.id }}" class="carousel slide" data-bs-ride="carousel">
-                    <div class="carousel-inner">
-                        {% for imagen in producto.imagenes.all %}
-                        <div class="carousel-item {% if forloop.first %}active{% endif %}">
-                            <img src="{{ imagen.imagen.url }}" class="d-block w-100" alt="{{ producto.titulo }}">
-                        </div>
-                        {% endfor %}
-                    </div>
-                    <button class="carousel-control-prev" type="button" data-bs-target="#carousel{{ producto.id }}" data-bs-slide="prev">
-                        <span class="carousel-control-prev-icon" aria-hidden="true"></span>
-                        <span class="visually-hidden">Previous</span>
-                    </button>
-                    <button class="carousel-control-next" type="button" data-bs-target="#carousel{{ producto.id }}" data-bs-slide="next">
-                        <span class="carousel-control-next-icon" aria-hidden="true"></span>
-                        <span class="visually-hidden">Next</span>
-                    </button>
-                </div>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    {% load static %}
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Inicio</title>
+    <link rel="stylesheet" href="{% static 'css/styles.css' %}">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body>
+    <!-- Header -->
+    <header id="header" class="header">
+        <form method="get" action="" class="search-filters-form">
+            <!-- Primera fila: Logo y búsqueda -->
+            <div class="row-top">
+                <a href="/" class="logo">
+                    <img src="{% static 'images/logo.png' %}" alt="logo">
+                </a>
+                <input type="text" name="q" placeholder="Buscar por título..." value="{{ query }}" class="search-input">
             </div>
-            {% endfor %}
-        {% else %}
-            <p>No se encontraron productos.</p>
-        {% endif %}
-    </div>
-</div>
-{% endblock %}
+    
+            <!-- Segunda fila: Filtros y botón -->
+            <div class="row-bottom">
+                <select name="ubicacionn" class="custom-select">
+                    <option value="">Ubicación</option>
+                    <option value="Campamentos Saharauis" {% if ubicacion == "Campamentos Saharauis" %}selected{% endif %}>
+                        Campamentos Saharauis
+                    </option>
+                    <option value="Tindouf" {% if ubicacion == "Tindouf" %}selected{% endif %}>Tindouf</option>
+                    <option value="Mauritania" {% if ubicacion == "Mauritania" %}selected{% endif %}>Mauritania</option>
+                    <option value="España" {% if ubicacion == "España" %}selected{% endif %}>España</option>
+                </select>
+                <select name="categoria" class="custom-select">
+                    <option value="">Categoría</option>
+                    {% for categoria in categorias %}
+                    <option value="{{ categoria.id }}" {% if categoria.id|stringformat:"s" == categoria_id %}selected{% endif %}>
+                        {{ categoria.nombre }}
+                    </option>
+                    {% endfor %}
+                </select>
+                <select name="estado" class="custom-select">
+                    <option value="">Estado</option>
+                    <option value="Nuevo" {% if estado == "Nuevo" %}selected{% endif %}>Nuevo</option>
+                    <option value="Segunda mano" {% if estado == "Segunda mano" %}selected{% endif %}>Segunda mano</option>
+                </select>
+                <select name="orden" class="custom-select">
+                    <option value="">Ordenar</option>
+                    <option value="precio_asc" {% if orden == "precio_asc" %}selected{% endif %}>De más barato a más caro</option>
+                    <option value="precio_desc" {% if orden == "precio_desc" %}selected{% endif %}>De más caro a más barato</option>
+                    <option value="reciente" {% if orden == "reciente" %}selected{% endif %}>Recientes</option>
+                </select>
+                <button type="submit" class="apply-filters">Aplicar</button>
+            </div>
+        </form>
+    </header>
+    
+    <!-- Main Content -->
+    <main>
+        <div class="container">
+            <h2>Productos Publicados</h2>
+            <div class="productos">
+                {% if productos %}
+                    {% for producto in productos %}
+                    <div class="producto">
+                        <h3>{{ producto.titulo }}</h3>
+                        <p>{{ producto.descripcion }}</p>
+                        <p>Precio: {{ producto.precio }}</p>
+                        <p>Ubicación: {{ producto.ubicacion }}</p>
+                        <p>Categoría: {{ producto.categoria.nombre }}</p>
+                        <p>Estado: {{ producto.estado }}</p>
+
+                        <!-- Carrusel de imágenes -->
+                        <div id="carousel{{ producto.id }}" class="carousel slide" data-bs-ride="carousel">
+                            <div class="carousel-inner">
+                                {% for imagen in producto.imagenes.all %}
+                                <div class="carousel-item {% if forloop.first %}active{% endif %}">
+                                    <img src="{{ imagen.imagen.url }}" class="d-block w-100" alt="{{ producto.titulo }}">
+                                </div>
+                                {% endfor %}
+                            </div>
+                            <button class="carousel-control-prev" type="button" data-bs-target="#carousel{{ producto.id }}" data-bs-slide="prev">
+                                <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                                <span class="visually-hidden">Previous</span>
+                            </button>
+                            <button class="carousel-control-next" type="button" data-bs-target="#carousel{{ producto.id }}" data-bs-slide="next">
+                                <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                                <span class="visually-hidden">Next</span>
+                            </button>
+                        </div>
+                    </div>
+                    {% endfor %}
+                {% else %}
+                    <p>No se encontraron productos.</p>
+                {% endif %}
+            </div>
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="footer-icons">
+            <!-- Enlace al inicio -->
+            <a href="/" class="footer-icon">
+                <img src="{% static 'images/icons/home.png' %}" alt="Inicio">
+                <span>Inicio</span>
+            </a>
+            
+            <!-- Favoritos -->
+            <a href="#" class="footer-icon">
+                <img src="{% static 'images/icons/favorites.png' %}" alt="Favoritos">
+                <span>Favoritos</span>
+            </a>
+            
+            <!-- Subir contenido -->
+            <a href="#" class="footer-icon">
+                <img src="{% static 'images/icons/upload.png' %}" alt="Subir">
+                <span>Subir</span>
+            </a>
+            
+            <!-- Chat -->
+            <a href="#" class="footer-icon">
+                <img src="{% static 'images/icons/chat.png' %}" alt="Chat">
+                <span>Chat</span>
+            </a>
+            
+            <!-- Perfil o inicio de sesión -->
+            {% if user.is_authenticated %}
+                <a href="{% url 'perfil' %}" class="footer-icon">
+                    <img src="{% static 'images/icons/profile.png' %}" alt="Perfil">
+                    <span>Perfil</span>
+                </a>
+            {% else %}
+                <a href="{% url 'account_login' %}" class="footer-icon">
+                    <img src="{% static 'images/icons/profile.png' %}" alt="Iniciar sesión">
+                    <span>Iniciar sesión</span>
+                </a>
+            {% endif %}
+        </div>
+    </footer>
+
+    <script src="{% static 'js/javascript.js' %}"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
