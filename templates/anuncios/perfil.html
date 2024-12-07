@@ -10,7 +10,7 @@
     <img src="{{ MEDIA_URL }}avatars/default_avatar.png" alt="Avatar" width="150">
 {% endif %}
 <p><strong>Usuario:</strong> {{ perfil.user.username }}</p>
-<p><strong>Bio:</strong> {{ perfil.bio|default:"Sin información" }}</p>
+<p><strong>Biografia:</strong> {{ perfil.bio|default:"Sin información" }}</p>
 <p><strong>Ubicación:</strong> {{ perfil.ubicacion|default:"Ubicación no especificada" }}</p>
 <a href="{% url 'editar_perfil' %}" class="btn btn-primary">Editar Perfil</a>
 
