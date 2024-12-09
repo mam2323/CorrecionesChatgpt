@@ -3,13 +3,12 @@ from django.contrib.auth.models import User
 from django.dispatch import receiver
 from .models import Perfil
 
-
 @receiver(post_save, sender=User)
-def crear_perfil(sender, instance, created, **kwargs):
+def manejar_perfil_usuario(sender, instance, created, **kwargs):
+    """
+    Crear o guardar el perfil automáticamente cuando un usuario es creado o actualizado.
+    """
     if created:
         Perfil.objects.create(user=instance)
-
-
-@receiver(post_save, sender=User)
-def guardar_perfil(sender, instance, **kwargs):
-    instance.perfil.save()
+    else:
+        instance.perfil.save()

@@ -1,21 +1,31 @@
+{% extends "base.html" %}
+{% load static %}
 
+{% block title %}Registro{% endblock %}
 
- <!-- Mamuni :... -->
+{% block content %}
+<!-- Header con el logo -->
+<header id="header" class="header">
+    <div class="row-top">
+        <a href="/" class="logo">
+            <img src="{% static 'images/logo.png' %}" alt="logo">
+        </a>
+    </div>
+</header>
 
- <!DOCTYPE html>
- <html lang="en">
- <head>
-     <meta charset="UTF-8">
-     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-     <title>Registro</title>
- </head>
- <body>
-     <h1>Registro de Usuario</h1>
-     <form method="post">
-         {% csrf_token %}
-         {{ form.as_p }} <!-- Esto genera el formulario de registro -->
-         <button type="submit">Registrar</button>
-     </form>
- </body>
- </html>
- 
+<!-- Contenido del registro -->
+<h2>Crear una nueva cuenta</h2>
+
+<div id="formulario-registro" style="margin-top: 20px;">
+    <form method="POST">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <button type="submit" class="btn btn-primary">Registrarse</button>
+    </form>
+</div>
+
+<!-- Opción para ir al login -->
+<p style="margin-top: 20px;">
+    ¿Ya tienes una cuenta? <a href="{% url 'account_login' %}">Inicia sesión aquí</a>.
+</p>
+{% endblock %}

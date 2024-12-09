@@ -1,27 +1,36 @@
-<!DOCTYPE html>
-<html>
-<head>
-    <title>Opciones de Inicio de Sesión</title>
-</head>
-<body>
-    <h2>Inicia sesión o regístrate</h2>
-    
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Inicio de Sesión{% endblock %}
+
+{% block content %}
+<!-- Header con el logo -->
+<header id="header" class="header">
+    <div class="row-top">
+        <a href="/" class="logo">
+            <img src="{% static 'images/logo.png' %}" alt="logo">
+        </a>
+    </div>
+</header>
+
+<!-- Contenido del login -->
+<h2>Inicia sesión o regístrate</h2>
+
+<div id="formulario-login" style="margin-top: 20px;">
     <!-- Sección de inicio de sesión -->
-    <div>
-        <h3>Iniciar Sesión</h3>
-        <form method="post">
-            {% csrf_token %}
-            {{ form.as_p }}
-            <button type="submit">Iniciar sesión</button>
-        </form>
-    </div>
+    <h3>Iniciar Sesión</h3>
+    <form method="post">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <button type="submit" class="btn btn-primary">Iniciar sesión</button>
+    </form>
+</div>
 
-    <hr>
+<hr>
 
-    <!-- Sección de registro -->
-    <div>
-        <h3>¿No tienes cuenta? Regístrate aquí</h3>
-        <a href="{% url 'registro' %}">Crear cuenta nueva</a>
-    </div>
-</body>
-</html>
+<!-- Sección de registro -->
+<div id="formulario-registro-link" style="margin-top: 20px;">
+    <h3>¿No tienes cuenta? Regístrate aquí</h3>
+    <a href="{% url 'registro' %}" class="btn btn-secondary">Crear cuenta nueva</a>
+</div>
+{% endblock %}
