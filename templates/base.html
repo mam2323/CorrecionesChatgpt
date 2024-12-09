@@ -25,34 +25,32 @@
                 <img src="{% static 'images/icons/home.png' %}" alt="Inicio">
                 <span>Inicio</span>
             </a>
-            
+    
             <!-- Favoritos -->
             <a href="#" class="footer-icon">
                 <img src="{% static 'images/icons/favorites.png' %}" alt="Favoritos">
                 <span>Favoritos</span>
             </a>
-            
+    
             <!-- Subir contenido -->
             {% if user.is_authenticated %}
-            <a href="{% url 'publicar_producto' %}" class="footer-icon">
-                <img src="{% static 'images/icons/upload.png' %}" alt="Subir">
-                <span>Subir</span>
-            </a>
-        {% else %}
-            <a href="{% url 'account_login' %}" class="footer-icon">
-                <img src="{% static 'images/icons/upload.png' %}" alt="Subir">
-                <span>Subir</span>
-            </a>
-        {% endif %}
-        
-
-            
+                <a href="{% url 'publicar_producto' %}" class="footer-icon">
+                    <img src="{% static 'images/icons/upload.png' %}" alt="Subir">
+                    <span>Subir</span>
+                </a>
+            {% else %}
+                <a href="{% url 'account_login' %}?next={% url 'publicar_producto' %}" class="footer-icon">
+                    <img src="{% static 'images/icons/upload.png' %}" alt="Subir">
+                    <span>Subir</span>
+                </a>
+            {% endif %}
+    
             <!-- Chat -->
             <a href="#" class="footer-icon">
                 <img src="{% static 'images/icons/chat.png' %}" alt="Chat">
                 <span>Chat</span>
             </a>
-            
+    
             <!-- Perfil o inicio de sesión -->
             {% if user.is_authenticated %}
                 <a href="{% url 'perfil' %}" class="footer-icon">
@@ -60,7 +58,7 @@
                     <span>Perfil</span>
                 </a>
             {% else %}
-                <a href="{% url 'account_login' %}" class="footer-icon">
+                <a href="{% url 'account_login' %}?next={% url 'perfil' %}" class="footer-icon">
                     <img src="{% static 'images/icons/profile.png' %}" alt="Iniciar sesión">
                     <span>Iniciar sesión</span>
                 </a>

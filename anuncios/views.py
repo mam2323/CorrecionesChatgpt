@@ -95,15 +95,19 @@ def publicar_producto(request):
         form = ProductoForm()
     return render(request, 'anuncios/publicar_producto.html', {'form': form})
 
+from django.shortcuts import render, redirect
+from .forms import CustomUserCreationForm  # Importa tu formulario personalizado
+
 def registro(request):
+    next_url = request.GET.get('next', 'home')  # Obtén el parámetro next o usa 'home' como predeterminado
     if request.method == 'POST':
-        form = UserCreationForm(request.POST)
+        form = CustomUserCreationForm(request.POST)  # Usa el formulario personalizado
         if form.is_valid():
-            form.save()
-            # Redirige al login tras el registro
-            return redirect('account_login')
+            user = form.save()  # Crea el usuario
+            login(request, user)  # Inicia sesión automáticamente tras el registro
+            return redirect(next_url)  # Redirige a la URL original
     else:
-        form = UserCreationForm()
+        form = CustomUserCreationForm()  # Carga el formulario en blanco
     return render(request, 'registration/register.html', {'form': form})
 
 
