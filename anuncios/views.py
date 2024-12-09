@@ -85,7 +85,7 @@ def publicar_producto(request):
             producto = form.save(commit=False)
             producto.usuario = request.user
             producto.save()
-            return redirect('/lista_productos')
+            return redirect('lista_productos')
     else:
         form = ProductoForm()
     return render(request, 'anuncios/publicar_producto.html', {'form': form})
