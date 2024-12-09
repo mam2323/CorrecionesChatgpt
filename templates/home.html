@@ -59,13 +59,20 @@ Página de Inicio
         {% if productos %}
             {% for producto in productos %}
             <div class="producto">
+                <!-- Información del Usuario -->
+                <div class="user-info">
+                    <img src="{{ producto.usuario.perfil.avatar.url }}" alt="Avatar" width="50" style="border-radius: 50%;">
+                    <p><strong>Vendedor:</strong> {{ producto.usuario.username }}</p>
+                </div>
+    
+                <!-- Información del Producto -->
                 <h3>{{ producto.titulo }}</h3>
                 <p>{{ producto.descripcion }}</p>
                 <p>Precio: {{ producto.precio }}</p>
                 <p>Ubicación: {{ producto.ubicacion }}</p>
                 <p>Categoría: {{ producto.categoria.nombre }}</p>
                 <p>Estado: {{ producto.estado }}</p>
-
+    
                 <!-- Carrusel de imágenes -->
                 <div id="carousel{{ producto.id }}" class="carousel slide" data-bs-ride="carousel">
                     <div class="carousel-inner">
@@ -90,5 +97,6 @@ Página de Inicio
             <p>No se encontraron productos.</p>
         {% endif %}
     </div>
+    
 </div>
 {% endblock %}

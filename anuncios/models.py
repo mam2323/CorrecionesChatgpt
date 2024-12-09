@@ -86,6 +86,6 @@ class Mensaje(models.Model):
 class Perfil(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
     avatar = models.ImageField(
-        upload_to='avatars/', blank=True, null=True, default='avatars/default-avatar.png')
+        upload_to='avatars/', blank=True, null=True, default='avatars/default_avatar.png')
     bio = models.TextField(blank=True)
     ubicacion = models.CharField(max_length=100, blank=True)

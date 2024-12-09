@@ -7,15 +7,15 @@ from .forms import ProductoForm, PerfilForm
 from .models import Producto, Categoria
  
 def home(request):
-    # Obtener parámetros de búsqueda y filtros desde la URL
-    query = request.GET.get('q', '')  # Texto de búsqueda
-    ubicacion = request.GET.get('ubicacion', '')  # Filtro por ubicación
-    categoria_id = request.GET.get('categoria', '')  # Filtro por categoría
-    estado = request.GET.get('estado', '')  # Filtro por estado
-    orden = request.GET.get('orden', '')  # Filtro de orden
+    # Filtros
+    query = request.GET.get('q', '')
+    ubicacion = request.GET.get('ubicacion', '')
+    categoria_id = request.GET.get('categoria', '')
+    estado = request.GET.get('estado', '')
+    orden = request.GET.get('orden', '')
 
-    # Obtener todos los productos inicialmente
-    productos = Producto.objects.prefetch_related('imagenes')
+    # Productos con relaciones prefetch
+    productos = Producto.objects.prefetch_related('imagenes').select_related('usuario__perfil')
 
     # Aplicar filtros opcionales
     if query:
@@ -27,32 +27,29 @@ def home(request):
     if estado:
         productos = productos.filter(estado=estado)
 
-    # Aplicar orden adicional (secundario) y combinarlo con -fecha_publicacion
+    # Ordenar productos
     if orden == "precio_asc":
         productos = productos.order_by('precio', '-fecha_publicacion')
     elif orden == "precio_desc":
         productos = productos.order_by('-precio', '-fecha_publicacion')
     else:
-        # Orden por defecto: recientes primero
         productos = productos.order_by('-fecha_publicacion')
 
-    # Obtener todas las categorías para mostrarlas en el filtro
+    # Categorías
     categorias = Categoria.objects.all()
 
-    # Contexto para la plantilla
+    # Contexto
     context = {
-        'productos': productos,  # Lista de productos filtrados
-        'query': query,  # Texto de búsqueda actual
-        'ubicacion': ubicacion,  # Ubicación seleccionada
-        'categoria_id': categoria_id,  # Categoría seleccionada
-        'estado': estado,  # Estado seleccionado
-        'orden': orden,  # Orden seleccionado
-        'categorias': categorias,  # Todas las categorías disponibles
+        'productos': productos,
+        'query': query,
+        'ubicacion': ubicacion,
+        'categoria_id': categoria_id,
+        'estado': estado,
+        'orden': orden,
+        'categorias': categorias,
     }
 
-    # Renderizar la plantilla
     return render(request, 'home.html', context)
-
 
 @login_required
 def perfil_view(request):
@@ -99,17 +96,16 @@ from django.shortcuts import render, redirect
 from .forms import CustomUserCreationForm  # Importa tu formulario personalizado
 
 def registro(request):
-    next_url = request.GET.get('next', 'home')  # Obtén el parámetro next o usa 'home' como predeterminado
+    next_url = request.GET.get('next', 'perfil')  # Redirige al perfil por defecto
     if request.method == 'POST':
         form = CustomUserCreationForm(request.POST)  # Usa el formulario personalizado
         if form.is_valid():
             user = form.save()  # Crea el usuario
             login(request, user)  # Inicia sesión automáticamente tras el registro
-            return redirect(next_url)  # Redirige a la URL original
+            return redirect(next_url)  # Redirige a la URL original o al perfil
     else:
-        form = CustomUserCreationForm()  # Carga el formulario en blanco
+        form = CustomUserCreationForm()  # Carga el formulario vacío
     return render(request, 'registration/register.html', {'form': form})
-
 
 @login_required
 def lista_productos(request):

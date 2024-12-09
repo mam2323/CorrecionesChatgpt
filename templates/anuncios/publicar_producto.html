@@ -15,7 +15,14 @@ Publicar Producto
     </div>
 </header>
 
-<h1>Publicar Productoo </h1>
+<h1>Publicar Producto</h1>
+
+<!-- Información del Usuario -->
+<div class="user-info">
+    <img src="{{ user.perfil.avatar.url }}" alt="Avatar" width="100" style="border-radius: 50%;">
+    <p>{{ user.username }}</p>
+</div>
+
 <form method="post" enctype="multipart/form-data">
     {% csrf_token %}
     <!-- Mostrar todos los campos del formulario -->
