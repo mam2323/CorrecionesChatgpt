@@ -17,10 +17,11 @@
 <h2>Mi Perfil</h2>
 
 <div id="datos-perfil">
-    {% if perfil.avatar %}
-        <img src="{{ perfil.avatar.url }}" alt="Avatar" width="150">
+    <!-- Mostrar avatar del perfil -->
+    {% if perfil.avatar and perfil.avatar.url %}
+        <img src="{{ perfil.avatar.url }}" alt="Avatar" width="150" style="border-radius: 50%;">
     {% else %}
-        <img src="{{ MEDIA_URL }}avatars/default_avatar.png" alt="Avatar" width="150">
+        <img src="{% static 'avatars/default_avatar.png' %}" alt="Avatar" width="150" style="border-radius: 50%;">
     {% endif %}
     <p><strong>Usuario:</strong> {{ perfil.user.username }}</p>
     <p><strong>Biografía:</strong> {{ perfil.bio|default:"Sin información" }}</p>
@@ -38,6 +39,49 @@
         {{ form.as_p }}
         <button type="submit" class="btn btn-primary">Guardar</button>
     </form>
+</div>
+
+<!-- Anuncios del Usuario -->
+<h3>Mis Anuncios</h3>
+<div id="anuncios">
+    {% if anuncios %}
+        <div class="productos">
+            {% for anuncio in anuncios %}
+            <div class="producto">
+                <!-- Información del Producto -->
+                <h4>{{ anuncio.titulo }}</h4>
+                <p>{{ anuncio.descripcion }}</p>
+                <p>Precio: {{ anuncio.precio }}</p>
+                <p>Ubicación: {{ anuncio.ubicacion }}</p>
+                <p>Categoría: {{ anuncio.categoria.nombre }}</p>
+                <p>Estado: {{ anuncio.estado }}</p>
+
+                <!-- Carrusel de imágenes -->
+                <div id="carousel{{ anuncio.id }}" class="carousel slide" data-bs-ride="carousel">
+                    <div class="carousel-inner">
+                        {% for imagen in anuncio.imagenes.all %}
+                        <div class="carousel-item {% if forloop.first %}active{% endif %}">
+                            <img src="{{ imagen.imagen.url }}" class="d-block w-100" alt="{{ anuncio.titulo }}">
+                        </div>
+                        {% endfor %}
+                    </div>
+                    <button class="carousel-control-prev" type="button" data-bs-target="#carousel{{ anuncio.id }}" data-bs-slide="prev">
+                        <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                        <span class="visually-hidden">Previous</span>
+                    </button>
+                    <button class="carousel-control-next" type="button" data-bs-target="#carousel{{ anuncio.id }}" data-bs-slide="next">
+                        <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                        <span class="visually-hidden">Next</span>
+                    </button>
+                </div>
+
+                <a href="{% url 'editar_anuncio' anuncio.id %}" class="btn btn-secondary">Editar</a>
+            </div>
+            {% endfor %}
+        </div>
+    {% else %}
+        <p>No has publicado ningún anuncio todavía.</p>
+    {% endif %}
 </div>
 
 <!-- Opción de Cerrar Sesión -->

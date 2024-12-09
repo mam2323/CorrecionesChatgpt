@@ -39,3 +39,32 @@ if (editarPerfilBtn && datosPerfil && formularioEditarPerfil) {
         }
     });
 }
+
+
+//Previsualizacion de la imagen de perfil
+document.addEventListener("DOMContentLoaded", function () {
+    const inputImagenes = document.getElementById("imagenes");
+    const previewContainer = document.getElementById("preview-container");
+
+    if (inputImagenes) {
+        inputImagenes.addEventListener("change", function (event) {
+            previewContainer.innerHTML = ""; // Limpiar las previsualizaciones previas
+
+            Array.from(event.target.files).forEach(file => {
+                if (file.type.startsWith('image/')) {
+                    const reader = new FileReader();
+                    reader.onload = function (e) {
+                        const img = document.createElement('img');
+                        img.src = e.target.result;
+                        img.alt = "Previsualización";
+                        img.style.width = "100px";
+                        img.style.borderRadius = "5px";
+                        img.style.marginRight = "10px";
+                        previewContainer.appendChild(img);
+                    };
+                    reader.readAsDataURL(file);
+                }
+            });
+        });
+    }
+});

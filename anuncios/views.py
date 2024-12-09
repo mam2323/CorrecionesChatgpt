@@ -51,25 +51,31 @@ def home(request):
 
     return render(request, 'home.html', context)
 
+from django.shortcuts import render, redirect
+from django.contrib.auth.decorators import login_required
+from django.contrib import messages
+from .forms import PerfilForm
+from .models import Producto
+
 @login_required
 def perfil_view(request):
-    # Obtener el perfil del usuario actual
     perfil = request.user.perfil
+    anuncios = Producto.objects.filter(usuario=request.user)  # Anuncios del usuario
+
     if request.method == 'POST':
-        # Si se envía un formulario, procesa los datos del perfil
         form = PerfilForm(request.POST, request.FILES, instance=perfil)
         if form.is_valid():
             form.save()
-            messages.success(
-                request, 'Tu perfil ha sido actualizado correctamente.')
-            # Redirige a la misma página después de guardar
+            messages.success(request, 'Tu perfil ha sido actualizado correctamente.')
             return redirect('perfil')
     else:
-        # Carga el formulario con los datos actuales del perfil
         form = PerfilForm(instance=perfil)
 
-    # Renderiza la plantilla del perfil con el formulario
-    return render(request, 'anuncios/perfil.html', {'perfil': perfil, 'form': form})
+    return render(request, 'anuncios/perfil.html', {
+        'perfil': perfil,
+        'form': form,
+        'anuncios': anuncios  # Pasar anuncios al template
+    })
 
 
 from django.contrib.auth.decorators import login_required
@@ -111,3 +117,19 @@ def registro(request):
 def lista_productos(request):
     productos = Producto.objects.all()  # Obtiene todos los productos
     return render(request, 'anuncios/lista_productos.html', {'productos': productos})
+
+
+@login_required
+def editar_anuncio(request, anuncio_id):
+    anuncio = Producto.objects.get(id=anuncio_id, usuario=request.user)
+
+    if request.method == 'POST':
+        form = ProductoForm(request.POST, request.FILES, instance=anuncio)
+        if form.is_valid():
+            form.save()
+            messages.success(request, 'El anuncio se ha actualizado correctamente.')
+            return redirect('perfil')
+    else:
+        form = ProductoForm(instance=anuncio)
+
+    return render(request, 'anuncios/editar_anuncio.html', {'form': form, 'anuncio': anuncio})

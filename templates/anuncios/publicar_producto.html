@@ -25,7 +25,6 @@ Publicar Producto
 
 <form method="post" enctype="multipart/form-data">
     {% csrf_token %}
-    <!-- Mostrar todos los campos del formulario -->
     {{ form.as_p }}
     
     <!-- Campo para subir múltiples imágenes -->
@@ -33,6 +32,13 @@ Publicar Producto
     <input type="file" name="imagenes" id="imagenes" accept="image/*" multiple>
     <p>Puedes subir hasta 8 imágenes.</p>
     
+    <!-- Contenedor de previsualización -->
+    <div id="preview-container" style="display: flex; gap: 10px; margin-top: 15px;"></div>
+
     <button type="submit" class="btn btn-primary">Publicar</button>
 </form>
+{% endblock %}
+
+{% block extra_js %}
+<script src="{% static 'js/preview_images.js' %}"></script>
 {% endblock %}
