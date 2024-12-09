@@ -33,13 +33,18 @@
             </a>
             
             <!-- Subir contenido -->
-           <!-- Subir contenido -->
-<!-- Subir contenido -->
+            {% if user.is_authenticated %}
             <a href="{% url 'publicar_producto' %}" class="footer-icon">
                 <img src="{% static 'images/icons/upload.png' %}" alt="Subir">
                 <span>Subir</span>
             </a>
-
+        {% else %}
+            <a href="{% url 'account_login' %}" class="footer-icon">
+                <img src="{% static 'images/icons/upload.png' %}" alt="Subir">
+                <span>Subir</span>
+            </a>
+        {% endif %}
+        
 
             
             <!-- Chat -->
