@@ -75,15 +75,17 @@ def perfil_view(request):
     return render(request, 'anuncios/perfil.html', {'perfil': perfil, 'form': form})
 
 
+from django.contrib.auth.decorators import login_required
+
+@login_required
 def publicar_producto(request):
     if request.method == 'POST':
         form = ProductoForm(request.POST, request.FILES)
         if form.is_valid():
             producto = form.save(commit=False)
-            producto.usuario = request.user  # Asigna el usuario actual como propietario
+            producto.usuario = request.user
             producto.save()
-            # Redirige a la lista de productos
-            return redirect('lista_productos')
+            return redirect('/lista_productos')
     else:
         form = ProductoForm()
     return render(request, 'anuncios/publicar_producto.html', {'form': form})
@@ -99,3 +101,9 @@ def registro(request):
     else:
         form = UserCreationForm()
     return render(request, 'anuncios/registro.html', {'form': form})
+
+
+@login_required
+def lista_productos(request):
+    productos = Producto.objects.all()  # Obtiene todos los productos
+    return render(request, 'anuncios/lista_productos.html', {'productos': productos})

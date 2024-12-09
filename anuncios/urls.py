@@ -21,5 +21,6 @@ urlpatterns = [
 
     # Perfiles
     path('perfil/', views.perfil_view, name='perfil'),  # Vista del perfil
+path('productos/', views.lista_productos, name='lista_productos'),
 
 ]
