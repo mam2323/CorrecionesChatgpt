@@ -193,3 +193,21 @@ body {
         flex-basis: auto; /* Tamaño automático ajustado */
     }
 }
+
+
+.btn-favorito {
+    cursor: pointer;
+    font-size: 1.5em;
+    margin: 10px 0;
+    transition: color 0.3s ease;
+}
+
+.btn-favorito:hover {
+    color: #ff0000;
+}
+
+
+.cerrar-sesion-form {
+    position: relative;
+    z-index: 10000; /* Valor alto para evitar colisiones */
+}

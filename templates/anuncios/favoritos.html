@@ -1,0 +1,17 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<h1>Mis Favoritos</h1>
+<div class="productos">
+    {% for favorito in favoritos %}
+    <div class="producto">
+        <h3>{{ favorito.producto.titulo }}</h3>
+        <p>{{ favorito.producto.descripcion }}</p>
+        <p>Precio: {{ favorito.producto.precio }}</p>
+        <a href="{% url 'eliminar_favorito' favorito.producto.id %}" class="btn btn-danger">Eliminar de Favoritos</a>
+    </div>
+    {% empty %}
+    <p>No tienes productos en favoritos.</p>
+    {% endfor %}
+</div>
+{% endblock %}

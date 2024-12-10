@@ -27,6 +27,11 @@
     <p><strong>Biografía:</strong> {{ perfil.bio|default:"Sin información" }}</p>
     <p><strong>Ubicación:</strong> {{ perfil.ubicacion|default:"Ubicación no especificada" }}</p>
 </div>
+<!-- Opción de Cerrar Sesión -->
+<form method="post" action="{% url 'logout' %}" class="cerrar-sesion-form" style="margin-top: 20px;">
+    {% csrf_token %}
+    <button type="submit" class="btn btn-danger">Cerrar Sesión</button>
+</form>
 
 <!-- Botón para mostrar/ocultar datos y formulario -->
 <button id="editar-perfil-btn" class="btn btn-secondary">Editar Perfil</button>
@@ -84,9 +89,5 @@
     {% endif %}
 </div>
 
-<!-- Opción de Cerrar Sesión -->
-<form method="post" action="{% url 'logout' %}" style="margin-top: 20px;">
-    {% csrf_token %}
-    <button type="submit" class="btn btn-danger">Cerrar Sesión</button>
-</form>
+
 {% endblock %}

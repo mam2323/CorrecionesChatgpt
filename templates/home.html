@@ -91,6 +91,17 @@ Página de Inicio
                         <span class="visually-hidden">Next</span>
                     </button>
                 </div>
+    
+                <!-- Ícono de Corazón -->
+                {% if producto.id in favoritos %}
+                <a href="{% url 'eliminar_favorito' producto.id %}" class="btn-favorito">
+                    <i class="fas fa-heart" style="color: red;"></i> <!-- Favorito activo -->
+                </a>
+                {% else %}
+                <a href="{% url 'agregar_favorito' producto.id %}" class="btn-favorito">
+                    <i class="far fa-heart" style="color: gray;"></i> <!-- Favorito inactivo -->
+                </a>
+                {% endif %}
             </div>
             {% endfor %}
         {% else %}

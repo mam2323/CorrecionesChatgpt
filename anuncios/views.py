@@ -6,6 +6,10 @@ from django.shortcuts import render, redirect
 from .forms import ProductoForm, PerfilForm
 from .models import Producto, Categoria
  
+from django.contrib.auth.decorators import login_required
+from .models import Producto, Categoria, Favorito
+
+@login_required
 def home(request):
     # Filtros
     query = request.GET.get('q', '')
@@ -38,6 +42,9 @@ def home(request):
     # Categorías
     categorias = Categoria.objects.all()
 
+    # Favoritos del usuario actual
+    favoritos = Favorito.objects.filter(usuario=request.user).values_list('producto_id', flat=True)
+
     # Contexto
     context = {
         'productos': productos,
@@ -47,6 +54,7 @@ def home(request):
         'estado': estado,
         'orden': orden,
         'categorias': categorias,
+        'favoritos': favoritos,  # IDs de los productos en favoritos
     }
 
     return render(request, 'home.html', context)
@@ -133,3 +141,39 @@ def editar_anuncio(request, anuncio_id):
         form = ProductoForm(instance=anuncio)
 
     return render(request, 'anuncios/editar_anuncio.html', {'form': form, 'anuncio': anuncio})
+
+
+from django.shortcuts import render, redirect, get_object_or_404
+from django.contrib.auth.decorators import login_required
+from .models import Producto, Favorito
+
+@login_required
+def ver_favoritos(request):
+    favoritos = Favorito.objects.filter(usuario=request.user).select_related('producto')
+    return render(request, 'anuncios/favoritos.html', {'favoritos': favoritos})
+from django.shortcuts import redirect, get_object_or_404
+from django.contrib.auth.decorators import login_required
+from .models import Producto, Favorito
+
+@login_required
+def agregar_a_favoritos(request, producto_id):
+    producto = get_object_or_404(Producto, id=producto_id)
+    favorito, created = Favorito.objects.get_or_create(usuario=request.user, producto=producto)
+    if created:
+        print(f"Producto {producto.titulo} añadido a favoritos para {request.user.username}")
+    else:
+        print(f"Producto {producto.titulo} ya estaba en favoritos para {request.user.username}")
+    return redirect(request.META.get('HTTP_REFERER', '/'))
+
+from django.shortcuts import redirect, get_object_or_404
+from .models import Producto, Favorito
+from django.contrib.auth.decorators import login_required
+
+@login_required
+def eliminar_de_favoritos(request, producto_id):
+    try:
+        favorito = Favorito.objects.get(usuario=request.user, producto_id=producto_id)
+        favorito.delete()
+    except Favorito.DoesNotExist:
+        pass  # Si el favorito no existe, no hacemos nada
+    return redirect(request.META.get('HTTP_REFERER', 'home'))  # Redirige al home o a la misma página
