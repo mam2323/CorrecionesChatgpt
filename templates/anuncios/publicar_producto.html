@@ -1,12 +1,9 @@
 {% extends "base.html" %}
 {% load static %}
 
-{% block title %}
-Publicar Producto
-{% endblock %}
+{% block title %}Publicar Producto{% endblock %}
 
 {% block content %}
-<!-- Header con el logo -->
 <header id="header" class="header">
     <div class="row-top">
         <a href="/" class="logo">
@@ -17,7 +14,6 @@ Publicar Producto
 
 <h1>Publicar Producto</h1>
 
-<!-- Información del Usuario -->
 <div class="user-info">
     <img src="{{ user.perfil.avatar.url }}" alt="Avatar" width="100" style="border-radius: 50%;">
     <p>{{ user.username }}</p>
@@ -26,19 +22,13 @@ Publicar Producto
 <form method="post" enctype="multipart/form-data">
     {% csrf_token %}
     {{ form.as_p }}
-    
-    <!-- Campo para subir múltiples imágenes -->
     <label for="imagenes">Imágenes (máx. 8):</label>
-    <input type="file" name="imagenes" id="imagenes" accept="image/*" multiple>
+    <input type="file" name="imagenes" id="imageness" accept="image/*" multiple>
     <p>Puedes subir hasta 8 imágenes.</p>
-    
-    <!-- Contenedor de previsualización -->
-    <div id="preview-container" style="display: flex; gap: 10px; margin-top: 15px;"></div>
+
+    <!-- Contenedor para previsualizar las imágenes -->
+    <div id="preview-container" style="margin-top: 20px; display: flex; flex-wrap: wrap;"></div>
 
     <button type="submit" class="btn btn-primary">Publicar</button>
 </form>
-{% endblock %}
-
-{% block extra_js %}
-<script src="{% static 'js/preview_images.js' %}"></script>
 {% endblock %}
