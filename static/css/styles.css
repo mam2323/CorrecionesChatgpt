@@ -211,3 +211,13 @@ body {
     position: relative;
     z-index: 10000; /* Valor alto para evitar colisiones */
 }
+
+.btn-favorito i {
+    font-size: 24px; /* Asegura un tamaño legible */
+    cursor: pointer;
+    transition: color 0.3s ease-in-out;
+}
+
+.btn-favorito:hover i {
+    color: #ff0000; /* Cambia a rojo en hover */
+}

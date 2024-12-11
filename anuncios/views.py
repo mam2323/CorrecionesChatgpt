@@ -151,7 +151,10 @@ from .models import Producto, Favorito
 def ver_favoritos(request):
     favoritos = Favorito.objects.filter(usuario=request.user).select_related('producto')
     return render(request, 'anuncios/favoritos.html', {'favoritos': favoritos})
-from django.shortcuts import redirect, get_object_or_404
+
+
+from django.http import JsonResponse
+from django.shortcuts import get_object_or_404
 from django.contrib.auth.decorators import login_required
 from .models import Producto, Favorito
 
@@ -160,10 +163,9 @@ def agregar_a_favoritos(request, producto_id):
     producto = get_object_or_404(Producto, id=producto_id)
     favorito, created = Favorito.objects.get_or_create(usuario=request.user, producto=producto)
     if created:
-        print(f"Producto {producto.titulo} añadido a favoritos para {request.user.username}")
-    else:
-        print(f"Producto {producto.titulo} ya estaba en favoritos para {request.user.username}")
-    return redirect(request.META.get('HTTP_REFERER', '/'))
+        return JsonResponse({'status': 'added', 'producto_id': producto_id})
+    return JsonResponse({'status': 'exists', 'producto_id': producto_id})
+
 
 from django.shortcuts import redirect, get_object_or_404
 from .models import Producto, Favorito
@@ -171,9 +173,10 @@ from django.contrib.auth.decorators import login_required
 
 @login_required
 def eliminar_de_favoritos(request, producto_id):
+    producto = get_object_or_404(Producto, id=producto_id)
     try:
-        favorito = Favorito.objects.get(usuario=request.user, producto_id=producto_id)
+        favorito = Favorito.objects.get(usuario=request.user, producto=producto)
         favorito.delete()
+        return JsonResponse({'status': 'removed', 'producto_id': producto_id})
     except Favorito.DoesNotExist:
-        pass  # Si el favorito no existe, no hacemos nada
-    return redirect(request.META.get('HTTP_REFERER', 'home'))  # Redirige al home o a la misma página
+        return JsonResponse({'status': 'not_found', 'producto_id': producto_id})

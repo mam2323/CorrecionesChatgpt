@@ -131,3 +131,43 @@ document.addEventListener("DOMContentLoaded", function () {
         }
     }
 });
+
+
+document.addEventListener('DOMContentLoaded', function () {
+    const botonesFavorito = document.querySelectorAll('.btn-favorito');
+
+    botonesFavorito.forEach(boton => {
+        boton.addEventListener('click', function () {
+            const productoId = this.getAttribute('data-producto-id');
+            const isFavorite = this.getAttribute('data-is-favorite') === 'true';
+            const url = isFavorite
+                ? `/favoritos/eliminar/${productoId}/`
+                : `/favoritos/agregar/${productoId}/`;
+
+            fetch(url, {
+                method: 'GET',
+                headers: {
+                    'X-Requested-With': 'XMLHttpRequest',
+                },
+            })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.status === 'added' || data.status === 'removed') {
+                        const icon = this.querySelector('i');
+                        if (data.status === 'added') {
+                            icon.classList.remove('far');
+                            icon.classList.add('fas');
+                            icon.style.color = 'red';
+                            this.setAttribute('data-is-favorite', 'true');
+                        } else if (data.status === 'removed') {
+                            icon.classList.remove('fas');
+                            icon.classList.add('far');
+                            icon.style.color = 'gray';
+                            this.setAttribute('data-is-favorite', 'false');
+                        }
+                    }
+                })
+                .catch(error => console.error('Error:', error));
+        });
+    });
+});

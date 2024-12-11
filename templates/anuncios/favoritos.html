@@ -4,11 +4,18 @@
 <h1>Mis Favoritos</h1>
 <div class="productos">
     {% for favorito in favoritos %}
-    <div class="producto">
+    <div class="producto" id="producto-{{ favorito.producto.id }}">
         <h3>{{ favorito.producto.titulo }}</h3>
         <p>{{ favorito.producto.descripcion }}</p>
         <p>Precio: {{ favorito.producto.precio }}</p>
-        <a href="{% url 'eliminar_favorito' favorito.producto.id %}" class="btn btn-danger">Eliminar de Favoritos</a>
+        
+        <!-- Ícono de Corazón -->
+        <a href="javascript:void(0);" 
+           class="btn-favorito" 
+           data-producto-id="{{ favorito.producto.id }}" 
+           data-is-favorite="true">
+            <i class="fas fa-heart" style="color: red;"></i>
+        </a>
     </div>
     {% empty %}
     <p>No tienes productos en favoritos.</p>

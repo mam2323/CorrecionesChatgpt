@@ -58,7 +58,7 @@ Página de Inicio
     <div class="productos">
         {% if productos %}
             {% for producto in productos %}
-            <div class="producto">
+            <div class="producto" id="producto-{{ producto.id }}">
                 <!-- Información del Usuario -->
                 <div class="user-info">
                     <img src="{{ producto.usuario.perfil.avatar.url }}" alt="Avatar" width="50" style="border-radius: 50%;">
@@ -93,15 +93,18 @@ Página de Inicio
                 </div>
     
                 <!-- Ícono de Corazón -->
-                {% if producto.id in favoritos %}
-                <a href="{% url 'eliminar_favorito' producto.id %}" class="btn-favorito">
-                    <i class="fas fa-heart" style="color: red;"></i> <!-- Favorito activo -->
+                <a href="javascript:void(0);" 
+                    class="btn-favorito" 
+                    data-producto-id="{{ producto.id }}" 
+                    data-is-favorite="{% if producto.id in favoritos %}true{% else %}false{% endif %}">
+                     <i class="far {% if producto.id in favoritos %}fas{% else %}far{% endif %} fa-heart" 
+                    style="{% if producto.id in favoritos %}color: red;{% else %}color: gray;{% endif %}">
+               </i>
                 </a>
-                {% else %}
-                <a href="{% url 'agregar_favorito' producto.id %}" class="btn-favorito">
-                    <i class="far fa-heart" style="color: gray;"></i> <!-- Favorito inactivo -->
-                </a>
-                {% endif %}
+
+
+
+
             </div>
             {% endfor %}
         {% else %}
