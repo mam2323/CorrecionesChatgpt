@@ -23,6 +23,7 @@ INSTALLED_APPS = [
     'allauth.socialaccount',
     'allauth.socialaccount.providers.google',
     'allauth.socialaccount.providers.facebook',
+    'channels',
 ]
 
 SITE_ID = 1  # Configuración para django.contrib.sites
