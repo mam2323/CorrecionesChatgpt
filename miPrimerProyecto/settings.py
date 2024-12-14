@@ -24,11 +24,14 @@ INSTALLED_APPS = [
     'allauth.socialaccount.providers.google',
     'allauth.socialaccount.providers.facebook',
     'channels',
+    'corsheaders',  # Añadido para gestionar CORS
 ]
 
 SITE_ID = 1  # Configuración para django.contrib.sites
 
 MIDDLEWARE = [
+    # Middleware de CORS (debe estar al inicio)
+    'corsheaders.middleware.CorsMiddleware',
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
@@ -60,6 +63,7 @@ TEMPLATES = [
 ]
 
 WSGI_APPLICATION = 'miPrimerProyecto.wsgi.application'
+ASGI_APPLICATION = 'miPrimerProyecto.asgi.application'
 
 # Configuración de base de datos
 DATABASES = {
@@ -128,5 +132,41 @@ LOGIN_REDIRECT_URL = 'home'
 LOGOUT_REDIRECT_URL = '/'
 ACCOUNT_LOGOUT_REDIRECT_URL = '/'
 
+# Configuración de CORS para React
+CORS_ALLOWED_ORIGINS = [
+    'http://localhost:3000',  # Dirección del servidor React
+]
+CORS_ALLOW_CREDENTIALS = True
 
-print(f"Using settings.py from: {__file__}")
+# Configuración de Django Channels con Redis
+CHANNEL_LAYERS = {
+    "default": {
+        "BACKEND": "channels_redis.core.RedisChannelLayer",
+        "CONFIG": {
+            "hosts": [("172.17.0.2", 6379)],
+            "capacity": 15000,  # Aumenta la capacidad de mensajes pendientes
+            "expiry": 120,  # Incrementa el tiempo de espera antes de cerrar conexiones inactivas
+        },
+    },
+}
+
+
+LOGGING = {
+    "version": 1,
+    "disable_existing_loggers": False,
+    "handlers": {
+        "console": {
+            "class": "logging.StreamHandler",
+        },
+    },
+    "loggers": {
+        "django": {
+            "handlers": ["console"],
+            "level": "DEBUG",
+        },
+        "channels": {
+            "handlers": ["console"],
+            "level": "DEBUG",
+        },
+    },
+}

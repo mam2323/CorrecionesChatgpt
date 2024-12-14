@@ -8,7 +8,8 @@ from django.utils.text import slugify
 def custom_upload_to(instance, filename):
     # Truncar el nombre del archivo y mantener la extensión
     base, ext = os.path.splitext(filename)
-    base = slugify(base[:50])  # Limitar el nombre a 50 caracteres y eliminar caracteres especiales
+    # Limitar el nombre a 50 caracteres y eliminar caracteres especiales
+    base = slugify(base[:50])
     return f"productos/{base}{ext}"
 
 
@@ -63,25 +64,6 @@ class Imagen(models.Model):
         return f"Imagen de {self.producto.titulo}"
 
 
-# Tabla de Chats
-class Chat(models.Model):
-    usuarios = models.ManyToManyField(User)
-    creado_en = models.DateTimeField(auto_now_add=True)
-
-    def __str__(self):
-        return f"Chat {self.id}"
-
-
-# Tabla de Mensajes
-class Mensaje(models.Model):
-    chat = models.ForeignKey(Chat, on_delete=models.CASCADE)
-    texto = models.TextField()
-    creado_en = models.DateTimeField(auto_now_add=True)
-
-    def __str__(self):
-        return f"Mensaje de {self.chat.id}"
-
-
 # Tabla de Perfiles
 class Perfil(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
@@ -102,7 +84,23 @@ class Favorito(models.Model):
     fecha_agregado = models.DateTimeField(auto_now_add=True)
 
     class Meta:
-        unique_together = ('usuario', 'producto')  # Un usuario no puede agregar el mismo producto varias veces
+        # Un usuario no puede agregar el mismo producto varias veces
+        unique_together = ('usuario', 'producto')
 
     def __str__(self):
         return f"{self.usuario.username} - {self.producto.titulo}"
+
+
+""" from django.db import models
+from django.contrib.auth.models import User
+
+class ChatRoom(models.Model):
+    name = models.CharField(max_length=255, unique=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+
+class Message(models.Model):
+    room = models.ForeignKey(ChatRoom, on_delete=models.CASCADE, related_name='messages')
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    content = models.TextField()
+    timestamp = models.DateTimeField(auto_now_add=True)
+ """
