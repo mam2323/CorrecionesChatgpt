@@ -6,10 +6,11 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # Configuración rápida para desarrollo: no apta para producción
 SECRET_KEY = 'django-insecure-faq=fx0cu+4wlhb4l(7_)uldljxi&yx3h-d-%a3*^sei8nmop8'
 DEBUG = True
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['127.0.0.1', '127.0.0.2', 'localhost', 'django.local']
 
 # Definición de aplicaciones
 INSTALLED_APPS = [
+
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -48,7 +49,11 @@ ROOT_URLCONF = 'miPrimerProyecto.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [BASE_DIR / 'templates'],  # Carpeta para plantillas HTML
+        'DIRS': [
+            BASE_DIR / 'templates',
+            BASE_DIR / 'frontend/build',
+        ],  # Carpeta para plantillas HTML
+
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -97,9 +102,11 @@ USE_TZ = True
 
 # Archivos estáticos y multimedia
 STATIC_URL = '/static/'
-STATICFILES_DIRS = [BASE_DIR / 'static']
+STATICFILES_DIRS = [BASE_DIR / 'frontend/build/static']
 MEDIA_URL = '/media/'
 MEDIA_ROOT = BASE_DIR / 'media'
+# Para la recolección de archivos en producción
+STATIC_ROOT = BASE_DIR / 'staticfiles'
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
@@ -134,18 +141,25 @@ ACCOUNT_LOGOUT_REDIRECT_URL = '/'
 
 # Configuración de CORS para React
 CORS_ALLOWED_ORIGINS = [
-    'http://localhost:3000',  # Dirección del servidor React
+    'http://localhost:3000',
+    "http://127.0.0.1:3000",  # React (cambia si usas otro dominio)
+    "http://127.0.0.2:8000",  # Dirección del servidor React
 ]
 CORS_ALLOW_CREDENTIALS = True
+CORS_ALLOW_HEADERS = [
+    "content-type",
+    "authorization",
+]
 
 # Configuración de Django Channels con Redis
 CHANNEL_LAYERS = {
     "default": {
         "BACKEND": "channels_redis.core.RedisChannelLayer",
         "CONFIG": {
-            "hosts": [("172.17.0.2", 6379)],
-            "capacity": 15000,  # Aumenta la capacidad de mensajes pendientes
-            "expiry": 120,  # Incrementa el tiempo de espera antes de cerrar conexiones inactivas
+            # Aquí usamos el nombre del contenedor Redis
+            "hosts": [("redis", 6379)],
+            "capacity": 15000,
+            "expiry": 120,
         },
     },
 }
