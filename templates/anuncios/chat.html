@@ -1,17 +1,21 @@
 {% extends "base.html" %}
 {% load static %}
-
 {% block content %}
+
+    {{ room_name|json_script:"room-name" }}
+
     <h1>Chat en tiempo real</h1>
 
     <!-- Contenedor de mensajes -->
-    <div id="messages-container" style="border: 1px solid #ccc; padding: 10px; height: 300px; overflow-y: auto;">
+    <div id="chat-log" style="border: 1px solid #ccc; padding: 10px; height: 300px; overflow-y: auto;">
         <!-- Aquí aparecerán los mensajes -->
     </div>
 
     <!-- Campo de entrada y botón de envío -->
-    <div style="margin-top: 10px;">
-        <input id="message-input" type="text" placeholder="Escribe tu mensaje..." style="width: 80%; padding: 5px;">
-        <button id="send-button" style="padding: 5px;">Enviar</button>
+    <div style="margin-top: 10px; display: flex; gap: 5px;">
+        <input id="chat-message-input" type="text" placeholder="Escribe tu mensaje..." style="width: 100%; padding: 5px;">
+        <button id="chat-message-submit" style="padding: 5px;">Enviar</button>
     </div>
+    <script src="{% static 'js/chat.js' %}"></script>
+
 {% endblock %}

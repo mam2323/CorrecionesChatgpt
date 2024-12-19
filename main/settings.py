@@ -1,8 +1,7 @@
 from pathlib import Path
-
+import os
 # Construir rutas dentro del proyecto como BASE_DIR / 'subcarpeta'.
 BASE_DIR = Path(__file__).resolve().parent.parent
-
 # Configuración rápida para desarrollo: no apta para producción
 SECRET_KEY = 'django-insecure-faq=fx0cu+4wlhb4l(7_)uldljxi&yx3h-d-%a3*^sei8nmop8'
 DEBUG = True
@@ -10,7 +9,7 @@ ALLOWED_HOSTS = ['127.0.0.1', '127.0.0.2', 'localhost', 'django.local']
 
 # Definición de aplicaciones
 INSTALLED_APPS = [
-
+    'daphne',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -43,7 +42,7 @@ MIDDLEWARE = [
     'allauth.account.middleware.AccountMiddleware',
 ]
 
-ROOT_URLCONF = 'miPrimerProyecto.urls'
+ROOT_URLCONF = 'main.urls'
 
 # Configuración de plantillas
 TEMPLATES = [
@@ -67,8 +66,16 @@ TEMPLATES = [
     },
 ]
 
-WSGI_APPLICATION = 'miPrimerProyecto.wsgi.application'
-ASGI_APPLICATION = 'miPrimerProyecto.asgi.application'
+# WSGI_APPLICATION = 'main.wsgi.application'
+ASGI_APPLICATION = 'main.asgi.application'
+CHANNEL_LAYERS = {
+    "default": {
+        "BACKEND": "channels_redis.core.RedisChannelLayer",
+        "CONFIG": {
+            "hosts": [("127.0.0.1", 6379)],
+        },
+    },
+}
 
 # Configuración de base de datos
 DATABASES = {
@@ -80,18 +87,18 @@ DATABASES = {
 
 # Validación de contraseñas
 AUTH_PASSWORD_VALIDATORS = [
-    {
-        'NAME': 'django.contrib.auth.password_validation.UserAttributeSimilarityValidator',
-    },
-    {
-        'NAME': 'django.contrib.auth.password_validation.MinimumLengthValidator',
-    },
-    {
-        'NAME': 'django.contrib.auth.password_validation.CommonPasswordValidator',
-    },
-    {
-        'NAME': 'django.contrib.auth.password_validation.NumericPasswordValidator',
-    },
+    #    {
+    #        'NAME': 'django.contrib.auth.password_validation.UserAttributeSimilarityValidator',
+    #    },
+    #    {
+    #        'NAME': 'django.contrib.auth.password_validation.MinimumLengthValidator',
+    #    },
+    #    {
+    #        'NAME': 'django.contrib.auth.password_validation.CommonPasswordValidator',
+    #    },
+    #    {
+    #        'NAME': 'django.contrib.auth.password_validation.NumericPasswordValidator',
+    #    },
 ]
 
 # Configuración de internacionalización
@@ -101,12 +108,12 @@ USE_I18N = True
 USE_TZ = True
 
 # Archivos estáticos y multimedia
-STATIC_URL = '/static/'
-STATICFILES_DIRS = [BASE_DIR / 'frontend/build/static']
-MEDIA_URL = '/media/'
+STATIC_URL = 'static/'
+# STATICFILES_DIRS = [BASE_DIR / 'static']
+MEDIA_URL = 'media/'
 MEDIA_ROOT = BASE_DIR / 'media'
 # Para la recolección de archivos en producción
-STATIC_ROOT = BASE_DIR / 'staticfiles'
+# STATIC_ROOT = BASE_DIR / 'static'
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
@@ -124,6 +131,12 @@ SOCIALACCOUNT_PROVIDERS = {
     },
 }
 
+if DEBUG:
+    STATICFILES_DIRS = [
+        os.path.join(BASE_DIR, 'static')
+    ]
+else:
+    STATIC_ROOT = os.path.join(BASE_DIR, 'static')
 # Claves para autenticación social
 SOCIAL_AUTH_GOOGLE_OAUTH2_KEY = '293982673470-iaocmec1g2v64ml9k6iulqm2vgnuejh5.apps.googleusercontent.com'
 SOCIAL_AUTH_GOOGLE_OAUTH2_SECRET = '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'
@@ -141,8 +154,6 @@ ACCOUNT_LOGOUT_REDIRECT_URL = '/'
 
 # Configuración de CORS para React
 CORS_ALLOWED_ORIGINS = [
-    'http://localhost:3000',
-    "http://127.0.0.1:3000",  # React (cambia si usas otro dominio)
     "http://127.0.0.2:8000",  # Dirección del servidor React
 ]
 CORS_ALLOW_CREDENTIALS = True
@@ -151,36 +162,32 @@ CORS_ALLOW_HEADERS = [
     "authorization",
 ]
 
-# Configuración de Django Channels con Redis
-CHANNEL_LAYERS = {
-    "default": {
-        "BACKEND": "channels_redis.core.RedisChannelLayer",
-        "CONFIG": {
-            # Aquí usamos el nombre del contenedor Redis
-            "hosts": [("redis", 6379)],
-            "capacity": 15000,
-            "expiry": 120,
-        },
-    },
-}
-
 
 LOGGING = {
-    "version": 1,
-    "disable_existing_loggers": False,
-    "handlers": {
-        "console": {
-            "class": "logging.StreamHandler",
+    'version': 1,
+    'disable_existing_loggers': False,
+    'formatters': {
+        'simple': {
+            'format': '%(levelname)s %(asctime)s %(module)s %(message)s'
         },
     },
-    "loggers": {
-        "django": {
-            "handlers": ["console"],
-            "level": "DEBUG",
+    'handlers': {
+        'console': {
+            'level': 'INFO',
+            'class': 'logging.StreamHandler',
+            'formatter': 'simple',
         },
-        "channels": {
-            "handlers": ["console"],
-            "level": "DEBUG",
+    },
+    'loggers': {
+        'django': {
+            'handlers': ['console'],
+            'level': 'INFO',
+            'propagate': True,
+        },
+        'my_app': {
+            'handlers': ['console'],
+            'level': 'DEBUG',
+            'propagate': False,
         },
     },
 }

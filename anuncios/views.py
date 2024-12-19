@@ -159,6 +159,16 @@ def agregar_a_favoritos(request, producto_id):
         usuario=request.user, producto=producto)
     return JsonResponse({'status': 'added' if created else 'exists', 'producto_id': producto_id})
 
+
+@login_required
+def chat_index(request):
+    return render(request, "anuncios/chat.html", {"room_name": "default"})
+
+
+@login_required
+def room(request, room_name):
+    return render(request, "anuncios/chat.html", {"room_name": room_name})
+
 # Vista: Eliminar de favoritos
 
 
