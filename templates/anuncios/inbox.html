@@ -1,0 +1,231 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Mis Chats{% endblock %}
+
+{% block content %}
+<style>
+    .hidden {
+        display: none;
+    }
+
+    @media (min-width: 769px) {
+        .chat-list,
+        .chat-room {
+            display: block;
+            width: 50%;
+        }
+
+        .chat-container {
+            display: flex;
+        }
+
+        .chat-list {
+            border-right: 1px solid #ddd;
+        }
+    }
+
+    @media (max-width: 768px) {
+        .chat-container {
+            display: block;
+        }
+
+        .chat-list.active,
+        .chat-room.active {
+            display: block;
+            width: 100%;
+        }
+
+        .chat-list.hidden,
+        .chat-room.hidden {
+            display: none;
+        }
+
+        .chat-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .back-button {
+            background: none;
+            border: none;
+            font-size: 16px;
+            cursor: pointer;
+            margin-right: 10px;
+        }
+
+        .back-button:hover {
+            color: #007bff;
+        }
+    }
+
+    .chat-messages {
+        height: 400px;
+        overflow-y: auto;
+        border: 1px solid #ddd;
+        border-radius: 5px;
+        padding: 10px;
+        background-color: #f9f9f9;
+    }
+
+    .my-message {
+        background-color: #dcf8c6;
+        padding: 10px;
+        margin-bottom: 10px;
+        border-radius: 10px;
+        text-align: right;
+    }
+
+    .other-message {
+        background-color: #f1f0f0;
+        padding: 10px;
+        margin-bottom: 10px;
+        border-radius: 10px;
+        text-align: left;
+    }
+
+    .chat-input {
+        display: flex;
+        gap: 10px;
+    }
+
+    .chat-input textarea {
+        flex: 1;
+        resize: none;
+        height: 50px;
+        border: 1px solid #ddd;
+        border-radius: 5px;
+        padding: 10px;
+    }
+
+    .chat-input button {
+        background-color: #007bff;
+        color: #fff;
+        border: none;
+        padding: 10px 20px;
+        border-radius: 5px;
+        cursor: pointer;
+    }
+
+    .chat-input button:hover {
+        background-color: #0056b3;
+    }
+</style>
+
+<div class="chat-container">
+    <!-- Lista de conversaciones -->
+    <div class="chat-list {% if room %}hidden{% endif %}" id="chat-list">
+        <h2>Bandeja de Entrada</h2>
+        {% if rooms %}
+            {% for room_item in rooms %}
+                <a href="?room_id={{ room_item.id }}" class="conversation">
+                    <img src="{{ room_item.product.imagenes.first.imagen.url }}" alt="Producto" class="product-image">
+                    <div class="conversation-info">
+                        <h3>
+                            {% if room_item.user1 == request.user %}
+                                {{ room_item.user2.username }}
+                            {% else %}
+                                {{ room_item.user1.username }}
+                            {% endif %}
+                        </h3>
+                        {% if room_item.messages.last %}
+                            <p>{{ room_item.messages.last.content|truncatewords:5 }}</p>
+                            <span>{{ room_item.messages.last.timestamp|date:"d M, H:i" }}</span>
+                        {% else %}
+                            <p>No hay mensajes todavía</p>
+                        {% endif %}
+                    </div>
+                </a>
+            {% endfor %}
+        {% else %}
+            <p>No tienes chats activos en este momento.</p>
+        {% endif %}
+    </div>
+
+    <!-- Chat activo -->
+    <div class="chat-room {% if not room %}hidden{% endif %}" id="chat-room">
+        {% if room %}
+            <div class="chat-header">
+                <button class="back-button" onclick="showChatList()">← Atrás</button>
+                <div class="product-details">
+                    <img src="{{ product.imagenes.first.imagen.url }}" alt="Producto">
+                    <div>
+                        <h3>{{ product.titulo }}</h3>
+                        <p>{{ product.precio }} €</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="chat-messages" id="chat-messages">
+                {% for msg in messages %}
+                    <div class="{% if msg.sender == request.user %}my-message{% else %}other-message{% endif %}">
+                        <p>{{ msg.content }}</p>
+                        <span>{{ msg.timestamp|date:"H:i" }}</span>
+                    </div>
+                {% endfor %}
+            </div>
+
+            <div class="chat-input">
+                <textarea id="message-input" placeholder="Escribe un mensaje..."></textarea>
+                <button id="send-message" data-room-id="{{ room.id }}">Enviar</button>
+            </div>
+        {% else %}
+            <p>Selecciona una conversación para empezar a chatear.</p>
+        {% endif %}
+    </div>
+</div>
+
+<script>
+    const roomId = "{{ room.id }}";
+    const chatSocket = new WebSocket(
+        `ws://${window.location.host}/ws/chat/${roomId}/`
+    );
+
+    // Manejar mensajes recibidos
+    chatSocket.onmessage = function(e) {
+        const data = JSON.parse(e.data);
+        const chatMessages = document.getElementById('chat-messages');
+        const newMessage = document.createElement('div');
+        newMessage.classList.add(data.sender === "{{ request.user.username }}" ? 'my-message' : 'other-message');
+        newMessage.innerHTML = `<p>${data.message}</p><span>${data.timestamp}</span>`;
+        chatMessages.appendChild(newMessage);
+        chatMessages.scrollTop = chatMessages.scrollHeight; // Auto-scroll al final
+    };
+
+    // Manejar cierre del WebSocket
+    chatSocket.onclose = function(e) {
+        console.error('Chat socket closed unexpectedly');
+    };
+
+    // Enviar mensaje al WebSocket
+    document.getElementById('send-message').addEventListener('click', function() {
+        const messageInput = document.getElementById('message-input');
+        const message = messageInput.value.trim();
+
+        if (message) {
+            chatSocket.send(JSON.stringify({
+                'message': message
+            }));
+            messageInput.value = ''; // Limpiar campo de entrada
+        }
+    });
+
+    // Enviar mensaje al presionar Enter
+    document.getElementById('message-input').addEventListener('keypress', function(e) {
+        if (e.key === 'Enter') {
+            e.preventDefault();
+            document.getElementById('send-message').click();
+        }
+    });
+
+    // Función para volver a la lista de conversaciones
+    function showChatList() {
+        const chatList = document.getElementById('chat-list');
+        const chatRoom = document.getElementById('chat-room');
+        chatList.classList.remove('hidden');
+        chatRoom.classList.add('hidden');
+    }
+</script>
+
+{% endblock %}

@@ -1,11 +1,16 @@
-from django.shortcuts import render
+from django.db import models
+from django.db.models import Max, Q, Prefetch
+from django.views.decorators.csrf import csrf_exempt
+from django.shortcuts import render, redirect, get_object_or_404
+from django.http import JsonResponse
 from django.contrib import messages
 from django.contrib.auth import login
 from django.contrib.auth.decorators import login_required
-from django.shortcuts import render, redirect, get_object_or_404
-from django.http import JsonResponse
+from django.urls import reverse
+
+from .models import Room, Message, Producto, Categoria, Favorito
 from .forms import ProductoForm, PerfilForm, CustomUserCreationForm
-from .models import Producto, Categoria, Favorito
+
 
 # Vista: Home con filtros
 
@@ -161,13 +166,92 @@ def agregar_a_favoritos(request, producto_id):
 
 
 @login_required
-def chat_index(request):
-    return render(request, "anuncios/chat.html", {"room_name": "default"})
+def inbox(request):
+    # Obtener todas las salas del usuario con mensajes prefetchados
+    rooms = Room.objects.annotate(
+        # Obtener el timestamp del último mensaje
+        last_message_timestamp=Max('messages__timestamp')
+    ).prefetch_related(
+        Prefetch('messages', queryset=Message.objects.order_by('timestamp'))
+    ).filter(
+        Q(user1=request.user) | Q(user2=request.user)
+        # Ordenar por el último mensaje o la creación de la sala
+    ).order_by('-last_message_timestamp', '-created_at')
+
+    # Verificar si se está accediendo desde un dispositivo móvil
+    is_mobile = request.GET.get('mobile', 'false') == 'true'
+
+    # Determinar la sala activa si no es móvil o si se especifica un room_id
+    room_id = request.GET.get('room_id')
+    room = None
+    if not is_mobile or room_id:
+        room = get_object_or_404(Room, id=room_id) if room_id else (
+            rooms.first() if rooms.exists() else None
+        )
+
+    # Mensajes de la sala activa
+    messages = room.messages.all() if room else []
+
+    return render(request, "anuncios/inbox.html", {
+        "rooms": rooms,
+        "room": room,
+        "messages": messages,
+        "product": room.product if room else None,
+        "other_user": room.user2 if room and room.user1 == request.user else room.user1 if room else None,
+        "is_mobile": is_mobile,
+    })
 
 
 @login_required
-def room(request, room_name):
-    return render(request, "anuncios/chat.html", {"room_name": room_name})
+@csrf_exempt  # Permitir solicitudes sin CSRF si no estás usando un formulario estándar
+def send_message(request, room_id):
+    if request.method == 'POST':
+        # Obtener el contenido del mensaje desde el formulario
+        content = request.POST.get('content', '').strip()
+
+        if content:
+            # Buscar la sala por ID
+            room = get_object_or_404(Room, id=room_id)
+
+            # Crear y guardar el nuevo mensaje
+            message = Message.objects.create(
+                room=room,
+                sender=request.user,
+                content=content
+            )
+
+            # Devolver una respuesta exitosa con los datos del mensaje
+            return JsonResponse({
+                'status': 'success',
+                'message': message.content,
+                'timestamp': message.timestamp.strftime('%H:%M')
+            })
+
+    # Responder con error si algo falla
+    return JsonResponse({'status': 'error', 'message': 'No se pudo enviar el mensaje'})
+
+
+@login_required
+def start_chat(request, product_id):
+    # Obtener el producto por ID
+    product = get_object_or_404(Producto, id=product_id)
+
+    # Evitar que el usuario inicie un chat consigo mismo
+    if product.usuario == request.user:
+        return redirect('inbox')
+
+    # Determinar los usuarios (el que inicia el chat y el propietario del producto)
+    user1, user2 = sorted([request.user, product.usuario], key=lambda u: u.pk)
+
+    # Crear o recuperar la sala de chat existente para este producto
+    room, created = Room.objects.get_or_create(
+        user1=user1,
+        user2=user2,
+        product=product,
+    )
+
+    # Redirigir al inbox con la sala activa
+    return redirect(f"{reverse('inbox')}?room_id={room.id}")
 
 # Vista: Eliminar de favoritos
 

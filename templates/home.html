@@ -53,64 +53,66 @@ Página de Inicio
 </header>
 
 <!-- Contenido principal de productos -->
-<div class="container">
-    <h2>Productos Publicados</h2>
-    <div class="productos">
-        {% if productos %}
-            {% for producto in productos %}
-            <div class="producto" id="producto-{{ producto.id }}">
-                <!-- Información del Usuario -->
-                <div class="user-info">
-                    <img src="{{ producto.usuario.perfil.avatar.url }}" alt="Avatar" width="50" style="border-radius: 50%;">
-                    <p><strong>Vendedor:</strong> {{ producto.usuario.username }}</p>
-                </div>
-    
-                <!-- Información del Producto -->
-                <h3>{{ producto.titulo }}</h3>
-                <p>{{ producto.descripcion }}</p>
-                <p>Precio: {{ producto.precio }}</p>
-                <p>Ubicación: {{ producto.ubicacion }}</p>
-                <p>Categoría: {{ producto.categoria.nombre }}</p>
-                <p>Estado: {{ producto.estado }}</p>
-    
-                <!-- Carrusel de imágenes -->
-                <div id="carousel{{ producto.id }}" class="carousel slide" data-bs-ride="carousel">
-                    <div class="carousel-inner">
-                        {% for imagen in producto.imagenes.all %}
-                        <div class="carousel-item {% if forloop.first %}active{% endif %}">
-                            <img src="{{ imagen.imagen.url }}" class="d-block w-100" alt="{{ producto.titulo }}">
-                        </div>
-                        {% endfor %}
-                    </div>
-                    <button class="carousel-control-prev" type="button" data-bs-target="#carousel{{ producto.id }}" data-bs-slide="prev">
-                        <span class="carousel-control-prev-icon" aria-hidden="true"></span>
-                        <span class="visually-hidden">Previous</span>
-                    </button>
-                    <button class="carousel-control-next" type="button" data-bs-target="#carousel{{ producto.id }}" data-bs-slide="next">
-                        <span class="carousel-control-next-icon" aria-hidden="true"></span>
-                        <span class="visually-hidden">Next</span>
-                    </button>
-                </div>
-    
-                <!-- Ícono de Corazón -->
-                <a href="javascript:void(0);" 
-                    class="btn-favorito" 
-                    data-producto-id="{{ producto.id }}" 
-                    data-is-favorite="{% if producto.id in favoritos %}true{% else %}false{% endif %}">
-                     <i class="far {% if producto.id in favoritos %}fas{% else %}far{% endif %} fa-heart" 
-                    style="{% if producto.id in favoritos %}color: red;{% else %}color: gray;{% endif %}">
-               </i>
-                </a>
-
-
-
-
+<div class="productos">
+    {% if productos %}
+        {% for producto in productos %}
+        <div class="producto" id="producto-{{ producto.id }}">
+            <!-- Información del Usuario -->
+            <div class="user-info">
+                <img src="{{ producto.usuario.perfil.avatar.url }}" alt="Avatar" width="50" style="border-radius: 50%;">
+                <p><strong>Vendedor:</strong> {{ producto.usuario.username }}</p>
             </div>
-            {% endfor %}
-        {% else %}
-            <p>No se encontraron productos.</p>
-        {% endif %}
-    </div>
-    
+
+            <!-- Información del Producto -->
+            <h3>{{ producto.titulo }}</h3>
+            <p>{{ producto.descripcion }}</p>
+            <p>Precio: {{ producto.precio }}</p>
+            <p>Ubicación: {{ producto.ubicacion }}</p>
+            <p>Categoría: {{ producto.categoria.nombre }}</p>
+            <p>Estado: {{ producto.estado }}</p>
+
+            <!-- Carrusel de imágenes -->
+            <div id="carousel{{ producto.id }}" class="carousel slide" data-bs-ride="carousel">
+                <div class="carousel-inner">
+                    {% for imagen in producto.imagenes.all %}
+                    <div class="carousel-item {% if forloop.first %}active{% endif %}">
+                        <img src="{{ imagen.imagen.url }}" class="d-block w-100" alt="{{ producto.titulo }}">
+                    </div>
+                    {% endfor %}
+                </div>
+                <button class="carousel-control-prev" type="button" data-bs-target="#carousel{{ producto.id }}" data-bs-slide="prev">
+                    <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                    <span class="visually-hidden">Previous</span>
+                </button>
+                <button class="carousel-control-next" type="button" data-bs-target="#carousel{{ producto.id }}" data-bs-slide="next">
+                    <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                    <span class="visually-hidden">Next</span>
+                </button>
+            </div>
+
+            <!-- Ícono de Corazón -->
+            <a href="javascript:void(0);" 
+                class="btn-favorito" 
+                data-producto-id="{{ producto.id }}" 
+                data-is-favorite="{% if producto.id in favoritos %}true{% else %}false{% endif %}">
+                 <i class="far {% if producto.id in favoritos %}fas{% else %}far{% endif %} fa-heart" 
+                style="{% if producto.id in favoritos %}color: red;{% else %}color: gray;{% endif %}">
+               </i>
+            </a>
+
+            <!-- Botón para iniciar el chat -->
+      <!-- Botón para iniciar el chat -->
+{% if producto.id %}
+<a href="{% url 'start_chat' producto.id %}" class="btn btn-primary">Iniciar Chat</a>
+{% else %}
+<span class="btn btn-disabled">Chat no disponible</span>
+{% endif %}
+
+       
+        </div>
+        {% endfor %}
+    {% else %}
+        <p>No se encontraron productos.</p>
+    {% endif %}
 </div>
 {% endblock %}

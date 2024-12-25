@@ -221,3 +221,36 @@ body {
 .btn-favorito:hover i {
     color: #ff0000; /* Cambia a rojo en hover */
 }
+
+
+.inbox .conversation {
+    display: flex;
+    align-items: center;
+    padding: 10px;
+    border-bottom: 1px solid #eee;
+}
+.product-image {
+    width: 50px;
+    height: 50px;
+    border-radius: 5px;
+    margin-right: 10px;
+}
+
+
+.my-message {
+    background-color: #dcf8c6;
+    text-align: right;
+    margin: 5px;
+    padding: 10px;
+    border-radius: 10px;
+}
+.other-message {
+    background-color: #f1f0f0;
+    text-align: left;
+    margin: 5px;
+    padding: 10px;
+    border-radius: 10px;
+}
+
+
+/* --------------------------------------------------------------------- */

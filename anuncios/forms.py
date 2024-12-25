@@ -1,8 +1,9 @@
+from .models import Producto, Imagen
+from django.utils.translation import gettext as _
 from .models import Perfil
 from django import forms
 from django.contrib.auth.models import User
 from django.contrib.auth.forms import UserCreationForm
-from .models import Producto, Imagen
 
 
 class ProductoForm(forms.ModelForm):
@@ -17,18 +18,9 @@ class ImagenForm(forms.ModelForm):
         fields = ['imagen']
 
 
-from django import forms
-from django.contrib.auth.forms import UserCreationForm
-from django.contrib.auth.models import User
-from django.utils.translation import gettext as _
-
-from django import forms
-from django.contrib.auth.forms import UserCreationForm
-from django.contrib.auth.models import User
-
 class CustomUserCreationForm(UserCreationForm):
     email = forms.EmailField(
-        required=True, 
+        required=True,
         label="Email:",
         help_text=None  # Elimina el texto de ayuda predeterminado
     )

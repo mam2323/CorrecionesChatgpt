@@ -2,6 +2,7 @@ import os
 from django.db import models
 from django.contrib.auth.models import User
 from django.utils.text import slugify
+# Asegúrate de que Producto está correctamente importado
 
 
 # Función para renombrar archivos al subirlos
@@ -91,16 +92,26 @@ class Favorito(models.Model):
         return f"{self.usuario.username} - {self.producto.titulo}"
 
 
-""" from django.db import models
-from django.contrib.auth.models import User
-
-class ChatRoom(models.Model):
-    name = models.CharField(max_length=255, unique=True)
+class Room(models.Model):
+    user1 = models.ForeignKey(
+        User, related_name='room_user1', on_delete=models.CASCADE)
+    user2 = models.ForeignKey(
+        User, related_name='room_user2', on_delete=models.CASCADE)
+    product = models.ForeignKey(
+        'anuncios.Producto', on_delete=models.CASCADE)  # Referencia por cadena
     created_at = models.DateTimeField(auto_now_add=True)
 
+    def __str__(self):
+        return f"Chat sobre {self.product.titulo} entre {self.user1.username} y {self.user2.username}"
+
+
 class Message(models.Model):
-    room = models.ForeignKey(ChatRoom, on_delete=models.CASCADE, related_name='messages')
-    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    room = models.ForeignKey(
+        Room, on_delete=models.CASCADE, related_name='messages')
+    sender = models.ForeignKey(User, on_delete=models.CASCADE)
     content = models.TextField()
     timestamp = models.DateTimeField(auto_now_add=True)
- """
+    is_read = models.BooleanField(default=False)
+
+    def __str__(self):
+        return f"{self.sender.username}: {self.content[:20]}"

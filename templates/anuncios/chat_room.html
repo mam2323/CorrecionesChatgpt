@@ -1,0 +1,121 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Chat sobre {{ product.titulo }}{% endblock %}
+
+{% block content %}
+<style>
+    /* Contenedor de mensajes */
+    .chat-messages {
+        border: 1px solid #ddd;
+        padding: 15px;
+        height: 400px;
+        overflow-y: auto;
+        background-color: #f9f9f9;
+        border-radius: 8px;
+        margin-bottom: 20px;
+    }
+
+    /* Mensajes enviados por el usuario */
+    .my-message {
+        background-color: #dcf8c6;
+        color: #333;
+        text-align: right;
+        margin: 10px 0;
+        padding: 10px 15px;
+        border-radius: 15px 15px 0 15px;
+        max-width: 70%;
+        align-self: flex-end;
+        box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.1);
+    }
+
+    /* Mensajes recibidos */
+    .other-message {
+        background-color: #f1f0f0;
+        color: #333;
+        text-align: left;
+        margin: 10px 0;
+        padding: 10px 15px;
+        border-radius: 15px 15px 15px 0;
+        max-width: 70%;
+        align-self: flex-start;
+        box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.1);
+    }
+
+    /* Campo de entrada */
+    .chat-input {
+        display: flex;
+        gap: 10px;
+        padding: 10px;
+        background-color: #fff;
+        border-radius: 8px;
+        box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.1);
+    }
+
+    .chat-input textarea {
+        width: 100%;
+        height: 50px;
+        padding: 10px;
+        resize: none;
+        border: 1px solid #ddd;
+        border-radius: 5px;
+    }
+
+    .chat-input button {
+        padding: 10px 20px;
+        background-color: #007bff;
+        color: white;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+    }
+
+    .chat-input button:hover {
+        background-color: #0056b3;
+    }
+</style>
+
+<script>
+    // Definir el usuario actual
+    const currentUser = "{{ request.user.username }}";
+</script>
+
+<!-- Resto del contenido -->
+{{ room.id|json_script:"room-name" }}
+
+<header id="header" class="header">
+    <div class="row-top">
+        <a href="/" class="logo">
+            <img src="{% static 'images/logo.png' %}" alt="logo">
+        </a>
+    </div>
+</header>
+
+<div class="product-details">
+    <img src="{{ product.imagenes.first.imagen.url }}" alt="Imagen del Producto" class="product-image">
+    <div class="product-info">
+        <h2>{{ product.titulo }}</h2>
+        <p><strong>Precio:</strong> {{ product.precio }}</p>
+        <p><strong>Categoría:</strong> {{ product.categoria.nombre }}</p>
+        <p><strong>Ubicación:</strong> {{ product.ubicacion }}</p>
+        <p><strong>Estado:</strong> {{ product.estado }}</p>
+    </div>
+</div>
+
+<h3>Hablando con {{ other_user.username }}</h3>
+
+<div id="chat-messages" class="chat-messages">
+    {% for msg in messages %}
+        <div class="{% if msg.sender == request.user %}my-message{% else %}other-message{% endif %}">
+            <p>{{ msg.content }}</p>
+            <span>{{ msg.timestamp|date:"H:i" }}</span>
+        </div>
+    {% endfor %}
+</div>
+
+<div id="chat-input" class="chat-input">
+    <textarea id="chat-message-input" placeholder="Escribe un mensaje..."></textarea>
+    <button id="chat-message-submit">Enviar</button>
+</div>
+<script src="{% static 'js/chat.js' %}"></script>
+{% endblock %}

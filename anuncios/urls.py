@@ -1,5 +1,8 @@
 from django.urls import path
 from . import views
+
+
+from django.views.generic import TemplateView
 from django.views.generic import TemplateView
 
 
@@ -29,9 +32,9 @@ urlpatterns = [
          views.eliminar_de_favoritos, name='eliminar_favorito'),
 
 
-    path('chat/', views.chat_index, name='chat'),
-    path("chat/<str:room_name>/", views.room, name="room"),
-
-
+    path("chat/inbox/", views.inbox, name="inbox"),
+    path("chat/start/<int:product_id>/", views.start_chat, name="start_chat"),
+    path("chat/room/<int:room_id>/send_message/",
+         views.send_message, name="send_message"),
 
 ]
